@@ -3,8 +3,36 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gestor de Préstamos - Acceso Único</title>
+    <title>Gestor de Préstamos Pro - Sistema Administrativo</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🔐</text></svg>">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
+        :root {
+            --primary: #2c3e50;
+            --primary-dark: #1a252f;
+            --secondary: #e74c3c;
+            --secondary-dark: #c0392b;
+            --success: #27ae60;
+            --success-dark: #219653;
+            --danger: #e74c3c;
+            --danger-dark: #c0392b;
+            --warning: #f39c12;
+            --warning-dark: #e67e22;
+            --info: #3498db;
+            --info-dark: #2980b9;
+            --adjust: #9b59b6;
+            --adjust-dark: #8e44ad;
+            --dark: #1a1a1a;
+            --light: #f8f9fa;
+            --gray: #95a5a6;
+            --border: #dee2e6;
+            --sidebar: #2c3e50;
+            --sidebar-hover: #34495e;
+            --card-bg: #ffffff;
+            --shadow: rgba(0, 0, 0, 0.1);
+            --shadow-hover: rgba(0, 0, 0, 0.2);
+        }
+
         * {
             margin: 0;
             padding: 0;
@@ -12,390 +40,1273 @@
         }
 
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, sans-serif;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
-            padding: 20px;
+            color: var(--dark);
+            line-height: 1.6;
+            font-weight: 400;
         }
 
         .container {
-            max-width: 1200px;
+            max-width: 1400px;
             margin: 0 auto;
+            padding: 20px;
         }
 
-        h1 {
-            text-align: center;
-            color: white;
-            margin-bottom: 30px;
-            font-size: 2.5em;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
-        }
-
-        .auth-container {
-            max-width: 400px;
-            margin: 100px auto;
-            background: white;
-            padding: 40px;
-            border-radius: 15px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-        }
-
-        .auth-container h2 {
-            color: #667eea;
-            margin-bottom: 20px;
-            text-align: center;
-        }
-
-        .user-info {
-            background: white;
-            padding: 15px 25px;
-            border-radius: 10px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
-            margin-bottom: 20px;
+        /* Pantalla de Login */
+        .auth-screen {
             display: flex;
-            justify-content: space-between;
+            justify-content: center;
             align-items: center;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
         }
 
-        .user-email {
-            color: #667eea;
-            font-weight: bold;
+        .auth-card {
+            background: var(--card-bg);
+            border-radius: 20px;
+            padding: 40px;
+            width: 100%;
+            max-width: 450px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
         }
 
-        .logout-btn {
-            padding: 8px 20px;
-            background: #ff4757;
-            color: white;
-            border: none;
-            border-radius: 6px;
-            cursor: pointer;
-            font-weight: bold;
-        }
-
-        .logout-btn:hover {
-            background: #ff3838;
-        }
-
-        .firebase-status {
+        .auth-logo {
             text-align: center;
-            color: white;
-            margin-bottom: 20px;
-            padding: 10px;
-            background: rgba(255,255,255,0.2);
-            border-radius: 10px;
-            font-size: 14px;
-        }
-
-        .status-connected {
-            background: rgba(46, 204, 113, 0.3);
-        }
-
-        .status-error {
-            background: rgba(255, 71, 87, 0.3);
-        }
-
-        .add-user-section {
-            background: white;
-            padding: 25px;
-            border-radius: 15px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
             margin-bottom: 30px;
         }
 
-        .add-user-section h2 {
-            color: #667eea;
-            margin-bottom: 15px;
-        }
-
-        .input-group {
-            display: flex;
-            gap: 10px;
+        .auth-logo i {
+            font-size: 3rem;
+            color: var(--primary);
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-text-fill-color: transparent;
             margin-bottom: 10px;
         }
 
-        input {
-            flex: 1;
-            padding: 12px;
-            border: 2px solid #e0e0e0;
-            border-radius: 8px;
-            font-size: 16px;
-            transition: border-color 0.3s;
+        .auth-logo h1 {
+            font-size: 1.8rem;
+            color: var(--primary);
+            font-weight: 700;
         }
 
-        input:focus {
-            outline: none;
-            border-color: #667eea;
-        }
-
-        button {
-            padding: 12px 25px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 16px;
-            font-weight: bold;
-            transition: transform 0.2s, box-shadow 0.2s;
-        }
-
-        button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
-        }
-
-        button:active {
-            transform: translateY(0);
-        }
-
-        button:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-            transform: none;
-        }
-
-        .users-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-            gap: 20px;
-        }
-
-        .user-card {
-            background: white;
-            padding: 20px;
-            border-radius: 15px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-            transition: transform 0.3s;
-        }
-
-        .user-card:hover {
-            transform: translateY(-5px);
-        }
-
-        .user-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 15px;
-            padding-bottom: 15px;
-            border-bottom: 2px solid #f0f0f0;
-        }
-
-        .user-name {
-            font-size: 1.5em;
-            color: #667eea;
-            font-weight: bold;
-        }
-
-        .delete-user {
-            background: #ff4757;
-            padding: 8px 15px;
-            font-size: 14px;
-        }
-
-        .delete-user:hover {
-            background: #ff3838;
-        }
-
-        .total-amount {
-            font-size: 2em;
-            font-weight: bold;
-            text-align: center;
-            margin: 15px 0;
-            padding: 15px;
-            background: #f8f9fa;
-            border-radius: 10px;
-        }
-
-        .total-positive {
-            color: #2ecc71; /* Verde para saldo positivo */
-        }
-
-        .total-negative {
-            color: #e74c3c; /* Rojo para saldo negativo */
-        }
-
-        .loan-input-section {
-            margin: 15px 0;
-        }
-
-        .input-group small {
-            font-size: 12px;
-            color: #666;
+        .auth-logo p {
+            color: var(--gray);
+            font-size: 0.9rem;
             margin-top: 5px;
         }
 
-        .loan-list {
-            max-height: 200px;
-            overflow-y: auto;
-            margin-top: 15px;
-        }
-
-        .loan-item {
+        /* Sistema de alertas */
+        .alert {
+            padding: 15px 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
             display: flex;
-            justify-content: space-between;
             align-items: center;
-            padding: 10px;
-            background: #f8f9fa;
+            gap: 15px;
+            border-left: 4px solid;
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from { transform: translateY(-10px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        .alert-success {
+            background: rgba(39, 174, 96, 0.1);
+            border-left-color: var(--success);
+            color: var(--success);
+        }
+
+        .alert-error {
+            background: rgba(231, 76, 60, 0.1);
+            border-left-color: var(--danger);
+            color: var(--danger);
+        }
+
+        .alert-warning {
+            background: rgba(243, 156, 18, 0.1);
+            border-left-color: var(--warning);
+            color: var(--warning);
+        }
+
+        .alert-info {
+            background: rgba(52, 152, 219, 0.1);
+            border-left-color: var(--info);
+            color: var(--info);
+        }
+
+        /* Formularios */
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block;
             margin-bottom: 8px;
-            border-radius: 8px;
+            font-weight: 600;
+            color: var(--dark);
+            font-size: 0.9rem;
         }
 
-        .loan-amount {
-            font-weight: bold;
+        .input-with-icon {
+            position: relative;
         }
 
-        .loan-amount.positive {
-            color: #2ecc71; /* Verde para préstamos (positivo) */
+        .input-with-icon i {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--gray);
         }
 
-        .loan-amount.negative {
-            color: #e74c3c; /* Rojo para pagos (negativo) */
+        .form-control {
+            width: 100%;
+            padding: 14px 15px 14px 45px;
+            border: 2px solid var(--border);
+            border-radius: 10px;
+            font-size: 15px;
+            transition: all 0.3s;
+            background: var(--light);
+            color: var(--dark);
         }
 
-        .loan-date {
-            font-size: 12px;
-            color: #999;
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(44, 62, 80, 0.1);
+            background: white;
         }
 
-        .delete-loan {
-            background: #ff6b6b;
-            padding: 5px 10px;
-            font-size: 12px;
-        }
-
-        .empty-state {
-            text-align: center;
-            color: #999;
-            padding: 20px;
-            font-style: italic;
-        }
-
-        .loading {
-            text-align: center;
-            color: white;
-            font-size: 1.2em;
-            padding: 40px;
-        }
-
-        .hidden {
-            display: none;
-        }
-
-        .error-message {
-            background: #ffe5e5;
-            color: #d32f2f;
-            padding: 10px;
-            border-radius: 8px;
-            margin-bottom: 15px;
-            text-align: center;
-        }
-
-        .warning-box {
-            background: #fff3cd;
-            border: 2px solid #ffc107;
-            color: #856404;
-            padding: 15px;
-            border-radius: 8px;
-            margin-top: 15px;
+        /* Botones */
+        .btn {
+            padding: 14px 25px;
+            border: none;
+            border-radius: 10px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
             font-size: 14px;
         }
 
-        .warning-box strong {
-            display: block;
+        .btn-block {
+            width: 100%;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+            box-shadow: 0 4px 15px rgba(44, 62, 80, 0.2);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(44, 62, 80, 0.3);
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, var(--danger), var(--danger-dark));
+            color: white;
+            box-shadow: 0 4px 15px rgba(231, 76, 60, 0.2);
+        }
+
+        .btn-danger:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(231, 76, 60, 0.3);
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, var(--success), var(--success-dark));
+            color: white;
+            box-shadow: 0 4px 15px rgba(39, 174, 96, 0.2);
+        }
+
+        .btn-success:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(39, 174, 96, 0.3);
+        }
+
+        .btn-warning {
+            background: linear-gradient(135deg, var(--warning), var(--warning-dark));
+            color: white;
+            box-shadow: 0 4px 15px rgba(243, 156, 18, 0.2);
+        }
+
+        .btn-warning:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(243, 156, 18, 0.3);
+        }
+
+        .btn-sm {
+            padding: 8px 15px;
+            font-size: 13px;
+        }
+
+        /* Header de la aplicación */
+        .app-header {
+            background: var(--card-bg);
+            border-radius: 15px;
+            padding: 20px 30px;
+            margin-bottom: 25px;
+            box-shadow: 0 5px 20px var(--shadow);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 20px;
+            z-index: 100;
+            border: 1px solid var(--border);
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .brand i {
+            font-size: 2rem;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-text-fill-color: transparent;
+        }
+
+        .brand h1 {
+            font-size: 1.5rem;
+            color: var(--primary);
+            font-weight: 700;
+        }
+
+        .security-badge {
+            background: rgba(39, 174, 96, 0.1);
+            color: var(--success);
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .header-stats {
+            display: flex;
+            gap: 20px;
+        }
+
+        .stat-card {
+            background: var(--light);
+            padding: 15px 20px;
+            border-radius: 10px;
+            text-align: center;
+            min-width: 140px;
+            border: 1px solid var(--border);
+            transition: all 0.3s;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px var(--shadow);
+        }
+
+        .stat-label {
+            font-size: 12px;
+            color: var(--gray);
+            text-transform: uppercase;
+            font-weight: 600;
             margin-bottom: 5px;
         }
-        
-        .success-message {
-            background: #d4edda;
-            color: #155724;
-            padding: 10px;
-            border-radius: 8px;
-            margin-bottom: 15px;
-            text-align: center;
-            border: 1px solid #c3e6cb;
+
+        .stat-value {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--primary);
         }
-        
-        .loan-type-indicator {
+
+        .user-menu {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .user-avatar {
+            width: 45px;
+            height: 45px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 700;
+            font-size: 1.2rem;
+            border: 2px solid white;
+            box-shadow: 0 0 0 2px var(--primary);
+        }
+
+        .user-info {
+            text-align: right;
+        }
+
+        .user-name {
+            font-weight: 600;
+            color: var(--primary);
+            font-size: 0.95rem;
+        }
+
+        .user-role {
             font-size: 12px;
-            padding: 2px 6px;
+            color: var(--gray);
+            font-weight: 500;
+        }
+
+        /* Dashboard Layout */
+        .dashboard {
+            display: grid;
+            grid-template-columns: 280px 1fr;
+            gap: 25px;
+            margin-bottom: 25px;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            background: var(--card-bg);
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 5px 20px var(--shadow);
+            border: 1px solid var(--border);
+            height: fit-content;
+            position: sticky;
+            top: 110px;
+        }
+
+        .sidebar-section {
+            margin-bottom: 30px;
+        }
+
+        .sidebar-section:last-child {
+            margin-bottom: 0;
+        }
+
+        .section-title {
+            font-size: 1rem;
+            color: var(--primary);
+            font-weight: 600;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .section-title i {
+            color: var(--secondary);
+        }
+
+        /* Main Content */
+        .main-content {
+            background: var(--card-bg);
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 5px 20px var(--shadow);
+            border: 1px solid var(--border);
+            min-height: 600px;
+        }
+
+        /* Filtros y Búsqueda */
+        .filter-bar {
+            background: var(--light);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 25px;
+            border: 1px solid var(--border);
+        }
+
+        .filter-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .search-container {
+            position: relative;
+            flex: 1;
+            max-width: 350px;
+        }
+
+        .search-container i {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--gray);
+        }
+
+        .search-container input {
+            width: 100%;
+            padding: 12px 15px 12px 45px;
+            border: 2px solid var(--border);
+            border-radius: 10px;
+            font-size: 14px;
+            background: white;
+            color: var(--dark);
+            transition: all 0.3s;
+        }
+
+        .search-container input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(44, 62, 80, 0.1);
+        }
+
+        /* Grid de Clientes */
+        .clients-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
+            gap: 25px;
+        }
+
+        /* Tarjeta de Cliente */
+        .client-card {
+            background: var(--card-bg);
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 5px 15px var(--shadow);
+            border: 1px solid var(--border);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .client-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px var(--shadow-hover);
+        }
+
+        .client-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 6px;
+            height: 100%;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+        }
+
+        .client-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .client-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .client-avatar {
+            width: 55px;
+            height: 55px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 700;
+            font-size: 1.3rem;
+            border: 3px solid white;
+            box-shadow: 0 0 0 2px var(--primary);
+        }
+
+        .client-details h3 {
+            font-size: 1.3rem;
+            color: var(--primary);
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+
+        .client-meta {
+            font-size: 13px;
+            color: var(--gray);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .client-meta i {
+            color: var(--secondary);
+        }
+
+        /* Saldo del Cliente */
+        .balance-container {
+            background: linear-gradient(135deg, var(--light), #f0f3f5);
+            border-radius: 12px;
+            padding: 25px;
+            margin: 20px 0;
+            text-align: center;
+            border: 2px solid transparent;
+            transition: all 0.3s;
+        }
+
+        .balance-container.positive {
+            border-color: rgba(39, 174, 96, 0.3);
+            background: linear-gradient(135deg, rgba(39, 174, 96, 0.05), rgba(39, 174, 96, 0.1));
+        }
+
+        .balance-container.negative {
+            border-color: rgba(231, 76, 60, 0.3);
+            background: linear-gradient(135deg, rgba(231, 76, 60, 0.05), rgba(231, 76, 60, 0.1));
+        }
+
+        .balance-container.zero {
+            border-color: rgba(149, 165, 166, 0.3);
+        }
+
+        .balance-amount {
+            font-size: 2.5rem;
+            font-weight: 800;
+            margin-bottom: 10px;
+        }
+
+        .balance-positive {
+            color: var(--success);
+        }
+
+        .balance-negative {
+            color: var(--danger);
+        }
+
+        .balance-zero {
+            color: var(--gray);
+        }
+
+        .balance-label {
+            font-size: 14px;
+            color: var(--gray);
+            font-weight: 500;
+        }
+
+        /* Formulario de Movimiento */
+        .movement-form {
+            background: var(--light);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            border: 1px solid var(--border);
+        }
+
+        .form-note {
+            font-size: 12px;
+            color: var(--gray);
+            margin-top: 8px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        /* Lista de Movimientos */
+        .movements-list {
+            max-height: 300px;
+            overflow-y: auto;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            background: var(--light);
+        }
+
+        .movement-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 20px;
+            border-bottom: 1px solid var(--border);
+            transition: all 0.3s;
+        }
+
+        .movement-item:last-child {
+            border-bottom: none;
+        }
+
+        .movement-item:hover {
+            background: #e8f4fc;
+        }
+
+        .movement-item.loan {
+            border-left: 4px solid var(--success);
+        }
+
+        .movement-item.payment {
+            border-left: 4px solid var(--danger);
+        }
+
+        .movement-item.adjustment {
+            border-left: 4px solid var(--adjust);
+        }
+
+        .movement-details {
+            flex: 1;
+        }
+
+        .movement-type {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 700;
+            margin-right: 10px;
+        }
+
+        .type-loan {
+            background: rgba(39, 174, 96, 0.1);
+            color: var(--success);
+        }
+
+        .type-payment {
+            background: rgba(231, 76, 60, 0.1);
+            color: var(--danger);
+        }
+
+        .type-adjustment {
+            background: rgba(155, 89, 182, 0.1);
+            color: var(--adjust);
+        }
+
+        .movement-amount {
+            font-weight: 700;
+            font-size: 1.1rem;
+        }
+
+        .movement-date {
+            font-size: 12px;
+            color: var(--gray);
+            margin-top: 3px;
+        }
+
+        /* Modal de Confirmación */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.7);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s;
+            backdrop-filter: blur(5px);
+        }
+
+        .modal-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .modal {
+            background: var(--card-bg);
+            border-radius: 20px;
+            padding: 40px;
+            max-width: 500px;
+            width: 90%;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3);
+            transform: translateY(-30px) scale(0.95);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .modal-overlay.active .modal {
+            transform: translateY(0) scale(1);
+        }
+
+        .modal-header {
+            text-align: center;
+            margin-bottom: 25px;
+        }
+
+        .modal-icon {
+            font-size: 4rem;
+            margin-bottom: 20px;
+        }
+
+        .modal-icon.warning {
+            color: var(--warning);
+        }
+
+        .modal-icon.danger {
+            color: var(--danger);
+        }
+
+        .modal-icon.success {
+            color: var(--success);
+        }
+
+        .modal-title {
+            font-size: 1.5rem;
+            color: var(--primary);
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+
+        .modal-body {
+            text-align: center;
+            margin-bottom: 30px;
+            color: var(--dark);
+            font-size: 1.1rem;
+            line-height: 1.6;
+        }
+
+        .modal-footer {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+        }
+
+        /* Indicadores de Carga */
+        .loading-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 60px;
+            text-align: center;
+        }
+
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 4px solid var(--border);
+            border-top: 4px solid var(--primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-bottom: 20px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .loading-text {
+            color: var(--gray);
+            font-size: 1.1rem;
+        }
+
+        /* Estados vacíos */
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: var(--gray);
+        }
+
+        .empty-state i {
+            font-size: 4rem;
+            margin-bottom: 20px;
+            opacity: 0.5;
+        }
+
+        .empty-state h3 {
+            font-size: 1.5rem;
+            margin-bottom: 10px;
+            color: var(--primary);
+        }
+
+        .empty-state p {
+            font-size: 1rem;
+            max-width: 400px;
+            margin: 0 auto;
+        }
+
+        /* Panel de Resumen */
+        .summary-panel {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            border-radius: 15px;
+            padding: 25px;
+            color: white;
+            margin-bottom: 25px;
+        }
+
+        .summary-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+        }
+
+        .summary-item {
+            text-align: center;
+        }
+
+        .summary-value {
+            font-size: 2.5rem;
+            font-weight: 800;
+            margin-bottom: 5px;
+            text-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        }
+
+        .summary-label {
+            font-size: 14px;
+            opacity: 0.9;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* Utilidades */
+        .hidden {
+            display: none !important;
+        }
+
+        .text-center {
+            text-align: center;
+        }
+
+        .mb-3 {
+            margin-bottom: 1rem;
+        }
+
+        .mb-4 {
+            margin-bottom: 1.5rem;
+        }
+
+        .mt-3 {
+            margin-top: 1rem;
+        }
+
+        .mt-4 {
+            margin-top: 1.5rem;
+        }
+
+        .d-flex {
+            display: flex;
+        }
+
+        .align-center {
+            align-items: center;
+        }
+
+        .justify-between {
+            justify-content: space-between;
+        }
+
+        /* Responsive */
+        @media (max-width: 1200px) {
+            .dashboard {
+                grid-template-columns: 1fr;
+            }
+            
+            .sidebar {
+                position: static;
+            }
+            
+            .clients-grid {
+                grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            }
+        }
+
+        @media (max-width: 768px) {
+            .app-header {
+                flex-direction: column;
+                gap: 20px;
+                text-align: center;
+            }
+            
+            .header-stats {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+            
+            .user-menu {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .clients-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .auth-card {
+                padding: 30px 20px;
+                margin: 20px;
+            }
+        }
+
+        /* Efectos especiales */
+        .pulse {
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(39, 174, 96, 0.4); }
+            70% { box-shadow: 0 0 0 10px rgba(39, 174, 96, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(39, 174, 96, 0); }
+        }
+
+        /* Scroll personalizado */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--light);
             border-radius: 4px;
-            margin-right: 5px;
         }
-        
-        .loan-type-prestamo {
-            background: #d4edda;
-            color: #155724;
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--primary);
+            border-radius: 4px;
         }
-        
-        .loan-type-pago {
-            background: #f8d7da;
-            color: #721c24;
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--primary-dark);
+        }
+
+        /* Tema oscuro opcional */
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --primary: #3498db;
+                --primary-dark: #2980b9;
+                --secondary: #9b59b6;
+                --adjust: #8e44ad;
+                --dark: #f8f9fa;
+                --light: #2c3e50;
+                --card-bg: #34495e;
+                --border: #4a5f7a;
+                --gray: #bdc3c7;
+                --shadow: rgba(0, 0, 0, 0.3);
+                --shadow-hover: rgba(0, 0, 0, 0.5);
+            }
+            
+            body {
+                background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            }
+            
+            .form-control {
+                background: #2c3e50;
+                color: white;
+                border-color: #4a5f7a;
+            }
+            
+            .form-control:focus {
+                background: #34495e;
+                color: white;
+            }
+            
+            .movement-item:hover {
+                background: #2c3e50;
+            }
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1>💰 Gestor de Préstamos</h1>
-        
-        <!-- Pantalla de Login -->
-        <div id="authScreen" class="auth-container">
-            <h2>🔐 Acceso Exclusivo</h2>
-            <div id="authMessage"></div>
-            
-            <div id="loginForm">
-                <div class="input-group" style="flex-direction: column;">
-                    <input type="email" id="loginEmail" placeholder="Correo electrónico del administrador" value="pablogalvan560@gmail.com">
-                    <input type="password" id="loginPassword" placeholder="Contraseña" value="123456">
+    <!-- Modal de Confirmación Seguro -->
+    <div id="confirmModal" class="modal-overlay">
+        <div class="modal">
+            <div class="modal-header">
+                <div class="modal-icon warning">
+                    <i class="fas fa-shield-alt"></i>
                 </div>
-                <button onclick="login()" style="width: 100%; margin-top: 10px;">Iniciar Sesión</button>
+                <h3 class="modal-title" id="modalTitle">Confirmación de Seguridad</h3>
             </div>
-
-            <div class="warning-box">
-                <strong>⚠️ Acceso Restringido</strong>
-                Solo el administrador autorizado puede acceder a esta aplicación.
+            <div class="modal-body">
+                <p id="modalMessage">Esta acción requiere verificación de identidad.</p>
             </div>
-        </div>
-
-        <!-- Aplicación Principal -->
-        <div id="appScreen" class="hidden">
-            <div class="user-info">
-                <span class="user-email" id="userEmail"></span>
-                <button class="logout-btn" onclick="logout()">Cerrar Sesión</button>
-            </div>
-
-            <div id="firebaseStatus" class="firebase-status">
-                Conectando a Firebase...
-            </div>
-            
-            <div class="add-user-section">
-                <h2>Agregar Nuevo Cliente</h2>
-                <div class="input-group">
-                    <input type="text" id="userName" placeholder="Nombre del cliente">
-                    <button onclick="addUser()" id="addUserBtn">Agregar Cliente</button>
-                </div>
-            </div>
-
-            <div id="usersContainer" class="users-grid">
-                <div class="loading">Cargando datos...</div>
+            <div class="modal-footer">
+                <button class="btn" onclick="closeModal()">
+                    <i class="fas fa-times"></i> Cancelar
+                </button>
+                <button class="btn btn-danger" id="confirmActionBtn">
+                    <i class="fas fa-check-circle"></i> Confirmar
+                </button>
             </div>
         </div>
     </div>
 
-    <!-- Firebase SDK v9 Modular (ES modules via CDN) -->
+    <!-- Modal de Información del Sistema -->
+    <div id="infoModal" class="modal-overlay hidden">
+        <div class="modal">
+            <div class="modal-header">
+                <div class="modal-icon success">
+                    <i class="fas fa-info-circle"></i>
+                </div>
+                <h3 class="modal-title">Información del Sistema</h3>
+            </div>
+            <div class="modal-body">
+                <p><strong>Sistema de Gestión de Préstamos v2.0</strong></p>
+                <p>Modo Administrador Exclusivo</p>
+                <p>Acceso Restringido: Solo UID Autorizado</p>
+                <p><small>Última conexión: <span id="lastConnection">N/A</span></small></p>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-primary" onclick="closeInfoModal()">
+                    <i class="fas fa-times"></i> Cerrar
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Pantalla de Autenticación -->
+    <div id="authScreen" class="auth-screen">
+        <div class="auth-card">
+            <div class="auth-logo">
+                <i class="fas fa-lock"></i>
+                <h1>Sistema Administrativo</h1>
+                <p>Acceso Restringido - Solo Personal Autorizado</p>
+            </div>
+            
+            <div id="authMessage"></div>
+            
+            <div class="security-notice alert alert-warning">
+                <i class="fas fa-shield-alt"></i>
+                <div>
+                    <strong>Modo de Seguridad Activo</strong>
+                    <p style="font-size: 12px; margin-top: 5px;">Acceso limitado al administrador principal.</p>
+                </div>
+            </div>
+            
+            <form id="loginForm" onsubmit="event.preventDefault(); login();">
+                <div class="form-group">
+                    <label class="form-label">Identificación Administrativa</label>
+                    <div class="input-with-icon">
+                        <i class="fas fa-user-secret"></i>
+                        <input type="email" id="loginEmail" class="form-control" 
+                               placeholder="admin@system.com" 
+                               value="pablogalvan560@gmail.com" required
+                               autocomplete="username">
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Clave de Seguridad</label>
+                    <div class="input-with-icon">
+                        <i class="fas fa-key"></i>
+                        <input type="password" id="loginPassword" class="form-control" 
+                               placeholder="" 
+                               value="" required
+                               autocomplete="current-password">
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <button type="submit" class="btn btn-primary btn-block">
+                        <i class="fas fa-fingerprint"></i> Verificar Identidad
+                    </button>
+                </div>
+            </form>
+
+            <div class="system-info mt-4 text-center">
+                <p style="font-size: 11px; color: var(--gray);">
+                    <i class="fas fa-microchip"></i> Sistema: Gestión de Préstamos v2.0<br>
+                    <i class="fas fa-user-shield"></i> Modo: Administrador Exclusivo<br>
+                    <i class="fas fa-clock"></i> Último Acceso: <span id="lastAccessTime">Nunca</span>
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Aplicación Principal -->
+    <div id="appScreen" class="hidden">
+        <div class="container">
+            <!-- Header de la App -->
+            <div class="app-header">
+                <div class="header-left">
+                    <div class="brand">
+                        <i class="fas fa-vault"></i>
+                        <h1>Gestor de Préstamos Pro</h1>
+                    </div>
+                    <div class="security-badge">
+                        <i class="fas fa-shield-check"></i>
+                        Modo Seguro Activo
+                    </div>
+                </div>
+                
+                <div class="header-stats">
+                    <div class="stat-card">
+                        <div class="stat-label">Clientes Activos</div>
+                        <div class="stat-value" id="totalClients">0</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">Préstamos Activos</div>
+                        <div class="stat-value" id="totalLoans">$0</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">Pagos Registrados</div>
+                        <div class="stat-value" id="totalPayments">$0</div>
+                    </div>
+                </div>
+                
+                <div class="user-menu">
+                    <div class="user-avatar" id="userAvatar">
+                        PA
+                    </div>
+                    <div class="user-info">
+                        <div class="user-name" id="userEmail"></div>
+                        <div class="user-role">Administrador Principal</div>
+                        <button class="btn btn-danger btn-sm mt-2" onclick="secureLogout()">
+                            <i class="fas fa-sign-out-alt"></i> Cerrar Sesión
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Dashboard Principal -->
+            <div class="dashboard">
+                <!-- Sidebar -->
+                <div class="sidebar">
+                    <div class="sidebar-section">
+                        <h3 class="section-title">
+                            <i class="fas fa-user-plus"></i> Nuevo Cliente
+                        </h3>
+                        <form id="addUserForm" onsubmit="event.preventDefault(); addUser();">
+                            <div class="form-group">
+                                <input type="text" id="userName" class="form-control" 
+                                       placeholder="Nombre completo del cliente" required
+                                       autocomplete="off">
+                            </div>
+                            <div class="form-group">
+                                <input type="tel" id="userPhone" class="form-control" 
+                                       placeholder="Teléfono de contacto (opcional)"
+                                       autocomplete="off">
+                            </div>
+                            <div class="form-group">
+                                <input type="text" id="userNotes" class="form-control" 
+                                       placeholder="Notas adicionales (opcional)"
+                                       autocomplete="off">
+                            </div>
+                            <button type="submit" class="btn btn-success btn-block">
+                                <i class="fas fa-user-check"></i> Registrar Cliente
+                            </button>
+                        </form>
+                    </div>
+
+                    <div class="sidebar-section">
+                        <h3 class="section-title">
+                            <i class="fas fa-chart-network"></i> Resumen Global
+                        </h3>
+                        <div id="globalSummary" class="loading-container">
+                            <div class="spinner"></div>
+                            <div class="loading-text">Cargando estadísticas...</div>
+                        </div>
+                    </div>
+
+                    <div class="sidebar-section">
+                        <h3 class="section-title">
+                            <i class="fas fa-database"></i> Herramientas
+                        </h3>
+                        <div class="d-flex flex-column gap-3">
+                            <button class="btn btn-primary" onclick="exportToCSV()">
+                                <i class="fas fa-file-export"></i> Exportar a CSV
+                            </button>
+                            
+                            <!-- BOTÓN DE DEBUG PARA CORREGIR DATOS -->
+                            <button class="btn btn-warning" onclick="fixCorruptedData()">
+                                <i class="fas fa-wrench"></i> Corregir Datos
+                            </button>
+                            
+                            <button class="btn" onclick="showSystemInfo()">
+                                <i class="fas fa-info-circle"></i> Información del Sistema
+                            </button>
+                            
+                            <button class="btn btn-danger" onclick="secureLogout()">
+                                <i class="fas fa-power-off"></i> Salir del Sistema
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="sidebar-section">
+                        <h3 class="section-title">
+                            <i class="fas fa-server"></i> Estado del Sistema
+                        </h3>
+                        <div id="firebaseStatus" class="security-notice alert alert-info">
+                            <i class="fas fa-sync fa-spin"></i>
+                            <div>
+                                <strong>Conectando a Base de Datos...</strong>
+                                <p style="font-size: 12px; margin-top: 5px;">Verificando credenciales...</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Contenido Principal -->
+                <div class="main-content">
+                    <div class="filter-bar">
+                        <div class="filter-header">
+                            <h3 style="font-size: 1.3rem; color: var(--primary);">
+                                <i class="fas fa-users"></i> Gestión de Clientes
+                            </h3>
+                            <div class="search-container">
+                                <i class="fas fa-search"></i>
+                                <input type="text" id="searchClient" 
+                                       placeholder="Buscar cliente por nombre..." 
+                                       oninput="filterClients()"
+                                       autocomplete="off">
+                            </div>
+                        </div>
+                        
+                        <div class="summary-panel">
+                            <div class="summary-grid">
+                                <div class="summary-item">
+                                    <div class="summary-value" id="summaryTotal">$0</div>
+                                    <div class="summary-label">Saldo Total</div>
+                                </div>
+                                <div class="summary-item">
+                                    <div class="summary-value" id="summaryActive">0</div>
+                                    <div class="summary-label">Clientes Activos</div>
+                                </div>
+                                <div class="summary-item">
+                                    <div class="summary-value" id="summaryPending">0</div>
+                                    <div class="summary-label">Préstamos Pendientes</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div id="usersContainer">
+                        <div class="loading-container">
+                            <div class="spinner"></div>
+                            <div class="loading-text">Cargando base de datos de clientes...</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Firebase SDK v9 Modular con Seguridad Mejorada -->
     <script type="module">
-        // Import the functions you need from the SDKs you need
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
-        import { getDatabase, ref, set, onValue, remove, child } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-database.js";
+        import { getDatabase, ref, set, onValue, remove } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-database.js";
         import { 
             getAuth, 
-            signInWithEmailAndPassword, 
-            createUserWithEmailAndPassword,
+            signInWithEmailAndPassword,
             signOut,
             onAuthStateChanged
         } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js";
 
-        // Your web app's Firebase configuration
+        // Configuración de Firebase
         const firebaseConfig = {
             apiKey: "AIzaSyBrfjepFvq-M0WI5as7OkHE2kKH-j46xb0",
             authDomain: "cobroprestamo22.firebaseapp.com",
@@ -407,265 +1318,650 @@
             measurementId: "G-VZGWWKZSKX"
         };
 
-        // Credenciales del administrador autorizado
-        const ADMIN_EMAIL = "pablogalvan560@gmail.com";
-        const ADMIN_UID = "tygoYRR0YEadoTA02VEooq2m2Dj1";
-        const ADMIN_PASSWORD = "123456&";
+        // CONSTANTES DE SEGURIDAD - SOLO TU ACCESO
+        const ADMIN_UID = "l6dRlHSG7NQvfQ4m8bzeWfNhNVR2";
+        const SYSTEM_NAME = "Gestor de Préstamos Pro v2.0";
+        const ACCESS_LOG_KEY = "last_system_access";
 
         // Initialize Firebase
         const app = initializeApp(firebaseConfig);
         const db = getDatabase(app);
         const auth = getAuth(app);
         
+        // Variables globales del sistema
         let usersRef;
         let users = {};
         let currentUser = null;
+        let systemActivity = {
+            loginAttempts: 0,
+            lastAccess: null,
+            connected: false
+        };
 
+        // Verificación de sesión previa
+        function checkPreviousSession() {
+            const lastAccess = localStorage.getItem(ACCESS_LOG_KEY);
+            if (lastAccess) {
+                document.getElementById('lastAccessTime').textContent = 
+                    new Date(parseInt(lastAccess)).toLocaleString();
+            }
+        }
+
+        // Inicialización del sistema
         document.addEventListener('DOMContentLoaded', function() {
-            console.log("DOM cargado, inicializando Firebase...");
+            console.log("🚀 Iniciando sistema administrativo...");
+            console.log("🔐 Modo: Administrador Exclusivo");
+            console.log("📊 Sistema:", SYSTEM_NAME);
             
-            // Observar cambios en la autenticación
-            onAuthStateChanged(auth, (user) => {
-                console.log("Estado de autenticación cambiado:", user);
-                if (user) {
-                    // Verificar que sea el admin autorizado por email O por UID
-                    console.log("Usuario autenticado - Email:", user.email, "UID:", user.uid);
-                    console.log("ADMIN_EMAIL:", ADMIN_EMAIL, "ADMIN_UID:", ADMIN_UID);
-                    console.log("¿Email coincide?:", user.email === ADMIN_EMAIL);
-                    console.log("¿UID coincide?:", user.uid === ADMIN_UID);
-                    
-                    if (user.email === ADMIN_EMAIL || user.uid === ADMIN_UID) {
-                        console.log("Acceso permitido para admin");
-                        currentUser = user;
-                        showApp();
-                        loadUserData();
-                    } else {
-                        console.log("Acceso denegado - no es admin");
-                        signOut(auth);
-                        showAuthMessage('Acceso denegado. Solo el administrador puede acceder.', 'error');
-                    }
-                } else {
-                    console.log("No hay usuario autenticado");
-                    currentUser = null;
-                    showAuth();
-                }
-            });
-
+            // Verificar sesión anterior
+            checkPreviousSession();
+            
+            // Configurar listeners de seguridad
+            setupSecurityListeners();
+            
+            // Observador de autenticación con verificación estricta
+            onAuthStateChanged(auth, handleAuthStateChange);
+            
+            // Inicializar eventos
             initEventListeners();
+            
+            // Configurar timeout de inactividad
+            setupInactivityTimeout();
         });
 
-        function showAuth() {
-            document.getElementById('authScreen').classList.remove('hidden');
-            document.getElementById('appScreen').classList.add('hidden');
+        // Manejador de cambios de autenticación
+        async function handleAuthStateChange(user) {
+            console.log("🛡️ Verificación de identidad:", user ? "Usuario detectado" : "No autenticado");
+            
+            if (user) {
+                // VERIFICACIÓN ESTRICTA: Solo el UID autorizado
+                if (user.uid !== ADMIN_UID) {
+                    console.error("🚫 INTRUSO DETECTADO - UID no autorizado:", user.uid);
+                    await signOut(auth);
+                    showAuthMessage('Acceso no autorizado. Sistema bloqueado.', 'error');
+                    logSecurityEvent('INTRUSION_ATTEMPT', { uid: user.uid });
+                    return;
+                }
+                
+                // Usuario autorizado
+                currentUser = user;
+                systemActivity.loginAttempts = 0;
+                systemActivity.lastAccess = new Date();
+                systemActivity.connected = true;
+                
+                // Registrar acceso
+                localStorage.setItem(ACCESS_LOG_KEY, Date.now().toString());
+                
+                // Inicializar sesión segura
+                await initializeSecureSession();
+                
+            } else {
+                // No hay usuario autenticado
+                currentUser = null;
+                systemActivity.connected = false;
+                showAuth();
+            }
         }
 
-        function showApp() {
-            document.getElementById('authScreen').classList.add('hidden');
-            document.getElementById('appScreen').classList.remove('hidden');
-            document.getElementById('userEmail').textContent = currentUser.email;
+        // Inicializar sesión segura
+        async function initializeSecureSession() {
+            try {
+                // Verificación adicional de seguridad
+                if (!currentUser || currentUser.uid !== ADMIN_UID) {
+                    throw new Error('Verificación de identidad fallida');
+                }
+                
+                // Mostrar aplicación
+                showApp();
+                
+                // Actualizar interfaz
+                updateUserInterface();
+                
+                // Cargar datos con verificación
+                await loadSecureData();
+                
+                // Registrar acceso exitoso
+                logSecurityEvent('LOGIN_SUCCESS', { 
+                    email: currentUser.email,
+                    time: new Date().toISOString()
+                });
+                
+                // Actualizar estado del sistema
+                updateStatus('🟢 Sistema Conectado - Modo Seguro Activo');
+                
+            } catch (error) {
+                console.error('❌ Error en inicialización segura:', error);
+                await secureLogout();
+                showAuthMessage('Error de seguridad. Reiniciando sistema...', 'error');
+            }
         }
 
+        // Login seguro
         async function login() {
             const email = document.getElementById('loginEmail').value.trim();
             const password = document.getElementById('loginPassword').value;
             
+            // Validaciones básicas
             if (!email || !password) {
-                showAuthMessage('Por favor completa todos los campos', 'error');
+                showAuthMessage('Por favor complete todos los campos', 'error');
                 return;
             }
             
             try {
-                console.log("Intentando iniciar sesión con:", email);
+                console.log("🔐 Iniciando verificación de identidad...");
+                
+                // Intentar login
                 const userCredential = await signInWithEmailAndPassword(auth, email, password);
-                console.log("Login exitoso:", userCredential.user);
+                console.log("✅ Credenciales verificadas");
+                
+                // La verificación del UID se hace en handleAuthStateChange
+                
             } catch (error) {
-                console.error('Error al iniciar sesión:', error);
-                console.error('Código de error:', error.code);
-                console.error('Mensaje de error:', error.message);
+                systemActivity.loginAttempts++;
+                console.error('❌ Error de autenticación:', error.code);
                 
-                let message = 'Acceso denegado';
+                // Manejo de errores específicos
+                let message = 'Error de verificación';
                 
-                // Si el usuario no existe, intentar crearlo automáticamente
-                if (error.code === 'auth/user-not-found') {
-                    console.log("Usuario no encontrado, intentando crear...");
-                    // Solo crear si es el email del admin
-                    if (email === ADMIN_EMAIL) {
-                        try {
-                            console.log("Creando usuario administrador...");
-                            const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-                            console.log("Usuario administrador creado:", userCredential.user);
-                            message = 'Usuario administrador creado exitosamente. Ahora inicia sesión.';
-                            showAuthMessage(message, 'success');
-                            // Cerrar sesión para que inicien con las nuevas credenciales
-                            await signOut(auth);
-                            return;
-                        } catch (createError) {
-                            console.error('Error al crear usuario:', createError);
-                            console.error('Código de error (creación):', createError.code);
-                            message = 'Error al crear el usuario administrador. Código: ' + createError.code;
-                        }
-                    } else {
-                        message = 'Usuario no autorizado. Solo el administrador puede acceder.';
-                    }
-                } else if (error.code === 'auth/wrong-password') {
-                    message = 'Contraseña incorrecta';
-                } else if (error.code === 'auth/invalid-email') {
-                    message = 'Correo electrónico inválido';
-                } else if (error.code === 'auth/too-many-requests') {
-                    message = 'Demasiados intentos. Por favor intenta más tarde.';
-                } else if (error.code === 'auth/network-request-failed') {
-                    message = 'Error de red. Verifica tu conexión a internet.';
-                } else if (error.code === 'auth/operation-not-allowed') {
-                    message = 'Método de autenticación no habilitado. Contacta al administrador.';
+                switch(error.code) {
+                    case 'auth/user-not-found':
+                        message = 'Credenciales no válidas';
+                        break;
+                    case 'auth/wrong-password':
+                        message = 'Clave de seguridad incorrecta';
+                        break;
+                    case 'auth/too-many-requests':
+                        message = 'Demasiados intentos. Sistema temporalmente bloqueado';
+                        break;
+                    case 'auth/network-request-failed':
+                        message = 'Error de conexión. Verifique su internet';
+                        break;
+                    default:
+                        message = 'Error del sistema de autenticación';
                 }
                 
                 showAuthMessage(message, 'error');
+                logSecurityEvent('LOGIN_FAILED', { 
+                    attempt: systemActivity.loginAttempts,
+                    error: error.code 
+                });
+                
+                // Bloqueo después de múltiples intentos
+                if (systemActivity.loginAttempts >= 3) {
+                    showAuthMessage('Sistema bloqueado por seguridad. Intente más tarde.', 'error');
+                    setTimeout(() => {
+                        document.getElementById('loginPassword').value = '';
+                    }, 3000);
+                }
             }
         }
 
-        async function logout() {
+        // Logout seguro
+        async function secureLogout() {
             try {
+                // Registrar logout
+                logSecurityEvent('LOGOUT', { 
+                    email: currentUser?.email,
+                    time: new Date().toISOString()
+                });
+                
+                // Cerrar sesión
                 await signOut(auth);
+                
+                // Limpiar datos sensibles
+                users = {};
+                currentUser = null;
+                systemActivity.connected = false;
+                
+                // Mostrar mensaje
+                showAuthMessage('Sesión cerrada exitosamente', 'success');
+                
             } catch (error) {
-                console.error('Error al cerrar sesión:', error);
-                alert('Error al cerrar sesión');
+                console.error('Error en logout seguro:', error);
+                showAuthMessage('Error al cerrar sesión', 'error');
             }
         }
 
-        function showAuthMessage(message, type) {
-            const messageDiv = document.getElementById('authMessage');
-            if (!messageDiv) return;
+        // Cargar datos con seguridad
+        async function loadSecureData() {
+            if (!verifyAdminAccess()) return;
             
-            messageDiv.className = type === 'error' ? 'error-message' : 'success-message';
-            messageDiv.textContent = message;
+            console.log("📊 Cargando datos con verificación de seguridad...");
             
-            setTimeout(() => {
-                messageDiv.innerHTML = '';
-            }, 5000);
-        }
-
-        function loadUserData() {
-            if (!currentUser) return;
-            
-            console.log("Cargando datos de Firebase...");
-            // Todos los datos en una sola ubicación centralizada
             usersRef = ref(db, 'loans');
             
-            onValue(usersRef, (snapshot) => {
-                console.log("Datos recibidos de Firebase:", snapshot.val());
-                users = snapshot.val() || {};
-                renderUsers();
-                updateStatus('Conectado a Firebase ✓', 'connected');
-            }, (error) => {
-                console.error('Error al leer datos:', error);
-                console.error('Código de error:', error.code);
-                updateStatus('Error al cargar datos: ' + error.code, 'error');
-            });
+            onValue(usersRef, 
+                (snapshot) => {
+                    console.log("✅ Datos recibidos de Firebase:", snapshot.val());
+                    
+                    const rawData = snapshot.val() || {};
+                    users = {};
+                    
+                    // PROCESAR DATOS Y ASEGURAR ESTRUCTURA CORRECTA
+                    Object.keys(rawData).forEach(userName => {
+                        const userData = rawData[userName];
+                        
+                        // NORMALIZAR ESTRUCTURA
+                        users[userName] = {
+                            loans: Array.isArray(userData.loans) ? userData.loans : [],
+                            createdAt: userData.createdAt || Date.now(),
+                            updatedAt: userData.updatedAt || Date.now(),
+                            createdBy: userData.createdBy || 'Sistema',
+                            phone: userData.phone || '',
+                            notes: userData.notes || ''
+                        };
+                        
+                        // DEPURACIÓN: Mostrar estructura
+                        console.log(`Usuario ${userName}:`, {
+                            loansType: typeof users[userName].loans,
+                            isArray: Array.isArray(users[userName].loans),
+                            loansCount: users[userName].loans.length
+                        });
+                    });
+                    
+                    console.log("📊 Datos procesados:", users);
+                    
+                    // Renderizar y actualizar
+                    renderUsers();
+                    updateStatistics();
+                    updateSystemSummary();
+                    updateStatus('🟢 Sistema Conectado - Datos cargados');
+                    
+                },
+                (error) => {
+                    console.error('❌ Error en carga de datos:', error);
+                    
+                    switch(error.code) {
+                        case 'PERMISSION_DENIED':
+                            updateStatus('🔴 Error de permisos - Verifique su identidad');
+                            showAlert(`
+                                <strong>Error de Seguridad</strong><br>
+                                No tiene permisos para acceder a estos datos.<br>
+                                Verifique que esté usando la cuenta administrativa correcta.
+                            `, 'error');
+                            break;
+                        default:
+                            updateStatus('🔴 Error de conexión con la base de datos');
+                            showAlert('Error de conexión con el servidor: ' + error.message, 'error');
+                    }
+                }
+            );
         }
 
-        function updateStatus(message, type) {
-            const statusEl = document.getElementById('firebaseStatus');
-            if (!statusEl) return;
-            
-            statusEl.textContent = message;
-            statusEl.className = 'firebase-status';
-            if (type === 'connected') {
-                statusEl.classList.add('status-connected');
-            } else if (type === 'error') {
-                statusEl.classList.add('status-error');
+        // Actualizar interfaz de usuario
+        function updateUserInterface() {
+            if (currentUser && currentUser.email) {
+                // Avatar
+                const avatar = document.getElementById('userAvatar');
+                const initials = currentUser.email.substring(0, 2).toUpperCase();
+                avatar.textContent = initials;
+                avatar.style.background = 'linear-gradient(135deg, #2ecc71, #27ae60)';
+                
+                // Email
+                document.getElementById('userEmail').textContent = currentUser.email;
+                
+                // Actualizar última conexión
+                document.getElementById('lastConnection').textContent = 
+                    new Date().toLocaleString();
             }
         }
 
+        // Agregar cliente con verificación
         async function addUser() {
-            if (!currentUser) return;
+            if (!verifyAdminAccess()) return;
             
             const nameInput = document.getElementById('userName');
-            const name = nameInput.value.trim();
+            const phoneInput = document.getElementById('userPhone');
+            const notesInput = document.getElementById('userNotes');
             
+            const name = nameInput.value.trim();
+            const phone = phoneInput.value.trim();
+            const notes = notesInput.value.trim();
+            
+            // Validaciones
             if (!name) {
-                alert('Por favor ingresa un nombre');
+                showAlert('El nombre del cliente es obligatorio', 'error');
                 return;
             }
             
             if (users[name]) {
-                alert('Este cliente ya existe');
+                showAlert('Este cliente ya existe en el sistema', 'warning');
                 return;
             }
             
             try {
-                console.log("Agregando cliente:", name);
-                await set(ref(db, 'loans/' + name), {
-                    loans: [],
-                    createdAt: Date.now()
-                });
+                // CREAR ESTRUCTURA CORRECTA
+                const userData = {
+                    loans: [], // <-- ESTO ES UN ARRAY VACÍO
+                    createdAt: Date.now(),
+                    updatedAt: Date.now(),
+                    createdBy: currentUser.email,
+                    metadata: {
+                        status: 'active',
+                        totalTransactions: 0,
+                        lastActivity: null
+                    }
+                };
+                
+                if (phone) userData.phone = phone;
+                if (notes) userData.notes = notes;
+                
+                // Guardar en Firebase con estructura correcta
+                await set(ref(db, 'loans/' + name), userData);
+                
+                // Actualizar datos locales
+                users[name] = userData;
+                
+                // Limpiar formulario
                 nameInput.value = '';
-            } catch (error) {
-                console.error('Error al agregar cliente:', error);
-                console.error('Código de error:', error.code);
-                alert('Error al agregar cliente: ' + error.code);
-            }
-        }
-
-        async function deleteUser(name) {
-            if (!currentUser) return;
-            
-            if (confirm(`¿Estás seguro de eliminar a ${name}? Se perderán todos sus préstamos y pagos.`)) {
-                try {
-                    await remove(ref(db, 'loans/' + name));
-                } catch (error) {
-                    console.error('Error al eliminar cliente:', error);
-                    alert('Error al eliminar cliente');
-                }
-            }
-        }
-
-        async function addLoan(userName) {
-            if (!currentUser) return;
-            
-            const input = document.getElementById(`loan-${userName}`);
-            const amount = parseFloat(input.value);
-            
-            if (isNaN(amount) || amount === 0) {
-                alert('Por favor ingresa un monto válido (diferente de cero)');
-                return;
-            }
-            
-            try {
-                const loans = users[userName]?.loans || [];
-                loans.push({
-                    amount: amount,
-                    date: Date.now()
+                phoneInput.value = '';
+                notesInput.value = '';
+                
+                // Mostrar confirmación
+                showAlert(`Cliente "${name}" registrado exitosamente`, 'success');
+                
+                // Actualizar UI
+                renderUsers();
+                updateStatistics();
+                
+                // Log de actividad
+                logSecurityEvent('CLIENT_ADDED', { 
+                    client: name,
+                    by: currentUser.email
                 });
                 
-                await set(ref(db, 'loans/' + userName + '/loans'), loans);
-                input.value = '';
             } catch (error) {
-                console.error('Error al agregar préstamo:', error);
-                alert('Error al agregar préstamo');
+                console.error('❌ Error al agregar cliente:', error);
+                showAlert('Error al registrar cliente: ' + error.message, 'error');
             }
         }
 
+        // Eliminar cliente con confirmación
+        async function deleteUser(name) {
+            if (!verifyAdminAccess()) return;
+            
+            openModal(
+                'Eliminar Cliente',
+                `¿Confirma la eliminación permanente del cliente <strong>"${name}"</strong>?<br>
+                <small>Esta acción eliminará todos sus préstamos y pagos asociados.</small>`,
+                async function() {
+                    try {
+                        await remove(ref(db, 'loans/' + encodeURIComponent(name)));
+                        showAlert(`Cliente "${name}" eliminado del sistema`, 'success');
+                        
+                        logSecurityEvent('CLIENT_DELETED', { 
+                            client: name,
+                            by: currentUser.email
+                        });
+                        
+                    } catch (error) {
+                        console.error('Error al eliminar cliente:', error);
+                        showAlert('Error al eliminar cliente', 'error');
+                    }
+                }
+            );
+        }
+
+        // Agregar movimiento con validación
+        async function addLoan(userName, customAmount = null, isAdjustment = false) {
+            if (!verifyAdminAccess()) return;
+            
+            let amount;
+            if (customAmount !== null) {
+                amount = customAmount;
+            } else {
+                const input = document.getElementById(`loan-${userName}`);
+                amount = parseFloat(input.value);
+            }
+            
+            if (isNaN(amount) || amount === 0) {
+                showAlert('Ingrese un monto válido diferente de cero', 'error');
+                return;
+            }
+            
+            if (Math.abs(amount) > 1000000) {
+                showAlert('El monto excede el límite permitido', 'error');
+                return;
+            }
+            
+            try {
+                const user = users[userName];
+                
+                // SI EL USUARIO NO EXISTE, CREARLO
+                if (!user) {
+                    console.warn(`⚠️ Usuario ${userName} no encontrado, creando estructura...`);
+                    
+                    // Crear estructura inicial
+                    users[userName] = {
+                        loans: [],
+                        createdAt: Date.now(),
+                        updatedAt: Date.now(),
+                        createdBy: currentUser.email
+                    };
+                    
+                    // Guardar en Firebase
+                    await set(ref(db, 'loans/' + userName), users[userName]);
+                }
+                
+                // ASEGURAR QUE loans SEA UN ARRAY
+                if (!Array.isArray(users[userName].loans)) {
+                    console.warn(`⚠️ loans no es array para ${userName}, corrigiendo...`);
+                    users[userName].loans = [];
+                }
+                
+                // Agregar el nuevo movimiento
+                const newLoan = {
+                    amount: amount,
+                    date: Date.now(),
+                    type: isAdjustment ? 'ajuste' : (amount > 0 ? 'prestamo' : 'pago'),
+                    processedBy: currentUser.email,
+                    note: isAdjustment ? 'Liquidación de cuenta' : '',
+                    id: Date.now().toString() + Math.random().toString(36).substr(2, 9)
+                };
+                
+                users[userName].loans.push(newLoan);
+                users[userName].updatedAt = Date.now();
+                
+                // Guardar en Firebase
+                await set(ref(db, 'loans/' + userName), users[userName]);
+                
+                // Limpiar input si se usó el input
+                if (customAmount === null) {
+                    const input = document.getElementById(`loan-${userName}`);
+                    input.value = '';
+                }
+                
+                // Mostrar confirmación
+                showAlert(isAdjustment ? 'Cuenta liquidada exitosamente' : 'Movimiento registrado exitosamente', 'success');
+                
+                // Actualizar UI
+                renderUsers();
+                updateStatistics();
+                
+                // Log de actividad
+                logSecurityEvent(isAdjustment ? 'ACCOUNT_CLOSED' : 'MOVEMENT_ADDED', { 
+                    client: userName,
+                    amount: amount,
+                    type: isAdjustment ? 'ADJUSTMENT' : (amount > 0 ? 'LOAN' : 'PAYMENT')
+                });
+                
+            } catch (error) {
+                console.error('❌ Error al agregar movimiento:', error);
+                console.error('Detalles del error:', {
+                    userName,
+                    users: users[userName],
+                    errorCode: error.code,
+                    errorMessage: error.message
+                });
+                
+                showAlert('Error al registrar movimiento: ' + error.message, 'error');
+            }
+        }
+
+        // Liquidar/Cerrar cuenta de cliente
+        async function closeAccount(userName) {
+            if (!verifyAdminAccess()) return;
+            
+            const total = calculateTotal(userName);
+            
+            if (total === 0) {
+                showAlert('La cuenta ya está liquidada (saldo cero).', 'info');
+                return;
+            }
+            
+            // El monto necesario para dejar la cuenta en cero es el negativo del total actual
+            const adjustmentAmount = -total;
+            
+            openModal(
+                'Liquidar Cuenta',
+                `¿Confirma la liquidación de la cuenta de <strong>"${userName}"</strong>?<br>
+                <strong>Saldo actual:</strong> ${total >= 0 ? '+' : '-'}$${Math.abs(total).toFixed(2)}<br>
+                <strong>Monto de ajuste:</strong> ${adjustmentAmount >= 0 ? '+' : '-'}$${Math.abs(adjustmentAmount).toFixed(2)}<br>
+                <small>Se creará un movimiento de ajuste para dejar el saldo en $0.00</small>`,
+                async function() {
+                    try {
+                        await addLoan(userName, adjustmentAmount, true);
+                    } catch (error) {
+                        console.error('Error al liquidar cuenta:', error);
+                        showAlert('Error al liquidar cuenta', 'error');
+                    }
+                }
+            );
+        }
+
+        // Eliminar movimiento con confirmación
         async function deleteLoan(userName, index, amount) {
-            if (!currentUser) return;
+            if (!verifyAdminAccess()) return;
             
             const tipo = amount >= 0 ? 'préstamo' : 'pago';
-            const confirmMessage = `¿Estás seguro de eliminar este ${tipo} de $${Math.abs(amount).toFixed(2)}?`;
+            const absAmount = Math.abs(amount).toFixed(2);
             
-            if (confirm(confirmMessage)) {
-                try {
-                    const loans = [...users[userName].loans];
-                    loans.splice(index, 1);
-                    await set(ref(db, 'loans/' + userName + '/loans'), loans);
-                } catch (error) {
-                    console.error('Error al eliminar préstamo:', error);
-                    alert('Error al eliminar préstamo');
+            openModal(
+                'Eliminar Movimiento',
+                `¿Confirma la eliminación de este ${tipo} por <strong>$${absAmount}</strong>?<br>
+                <small>Esta acción no se puede deshacer.</small>`,
+                async function() {
+                    try {
+                        const user = users[userName];
+                        if (!user || !user.loans) return;
+                        
+                        const loans = [...user.loans];
+                        loans.splice(index, 1);
+                        
+                        await set(ref(db, 'loans/' + encodeURIComponent(userName) + '/loans'), loans);
+                        await set(ref(db, 'loans/' + encodeURIComponent(userName) + '/updatedAt'), Date.now());
+                        
+                        showAlert('Movimiento eliminado', 'success');
+                        
+                        logSecurityEvent('MOVEMENT_DELETED', { 
+                            client: userName,
+                            amount: amount,
+                            index: index
+                        });
+                        
+                    } catch (error) {
+                        console.error('Error al eliminar movimiento:', error);
+                        showAlert('Error al eliminar movimiento', 'error');
+                    }
                 }
-            }
+            );
         }
 
+        // Exportar a CSV seguro
+        function exportToCSV() {
+            if (!verifyAdminAccess()) return;
+            
+            if (Object.keys(users).length === 0) {
+                showAlert('No hay datos para exportar', 'warning');
+                return;
+            }
+            
+            let csv = 'CLIENTE,TELEFONO,SALDO_ACTUAL,ULTIMA_ACTUALIZACION,NOTAS\n';
+            
+            for (const userName in users) {
+                const user = users[userName];
+                const total = calculateTotal(userName);
+                const phone = user.phone || 'N/A';
+                const notes = user.notes || 'N/A';
+                const lastUpdate = user.updatedAt ? 
+                    new Date(user.updatedAt).toLocaleDateString('es-MX', {
+                        year: 'numeric',
+                        month: '2-digit',
+                        day: '2-digit',
+                        hour: '2-digit',
+                        minute: '2-digit'
+                    }) : 'N/A';
+                
+                csv += `"${userName}","${phone}","${total.toFixed(2)}","${lastUpdate}","${notes}"\n`;
+                
+                // Detalles de movimientos
+                if (user.loans && user.loans.length > 0 && Array.isArray(user.loans)) {
+                    csv += 'MOVIMIENTOS:\n';
+                    csv += 'FECHA,TIPO,MONTO,PROCESADO_POR,NOTA\n';
+                    
+                    user.loans.forEach(loan => {
+                        const date = new Date(loan.date).toLocaleDateString('es-MX', {
+                            year: 'numeric',
+                            month: '2-digit',
+                            day: '2-digit',
+                            hour: '2-digit',
+                            minute: '2-digit'
+                        });
+                        const type = loan.type === 'ajuste' ? 'AJUSTE' : 
+                                    loan.amount > 0 ? 'PRÉSTAMO' : 'PAGO';
+                        const amount = Math.abs(loan.amount).toFixed(2);
+                        const processedBy = loan.processedBy || 'Sistema';
+                        const note = loan.note || '';
+                        
+                        csv += `"${date}","${type}","${amount}","${processedBy}","${note}"\n`;
+                    });
+                }
+                
+                csv += '\n';
+            }
+            
+            // Crear y descargar archivo
+            const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement('a');
+            const url = URL.createObjectURL(blob);
+            
+            link.setAttribute('href', url);
+            link.setAttribute('download', `backup_prestamos_${new Date().toISOString().split('T')[0]}_${Date.now()}.csv`);
+            link.style.visibility = 'hidden';
+            
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            
+            showAlert('Exportación completada exitosamente', 'success');
+            logSecurityEvent('EXPORT_CSV', { 
+                records: Object.keys(users).length,
+                by: currentUser.email
+            });
+        }
+
+        // Funciones de utilidad
         function calculateTotal(userName) {
-            const loans = users[userName]?.loans || [];
-            return loans.reduce((sum, loan) => sum + (loan.amount || 0), 0);
+            const user = users[userName];
+            if (!user) return 0;
+            
+            if (!user.loans || !Array.isArray(user.loans)) {
+                console.warn(`⚠️ No hay loans array para ${userName}`);
+                return 0;
+            }
+            
+            try {
+                return user.loans.reduce((sum, loan) => {
+                    if (!loan || loan.amount === undefined || loan.amount === null) {
+                        return sum;
+                    }
+                    const amount = parseFloat(loan.amount) || 0;
+                    return sum + amount;
+                }, 0);
+            } catch (error) {
+                console.error(`❌ Error calculando total para ${userName}:`, error);
+                return 0;
+            }
         }
 
         function formatDate(timestamp) {
@@ -679,101 +1975,610 @@
             });
         }
 
-        function getLoanType(amount) {
-            return amount >= 0 ? 'préstamo' : 'pago';
+        // Verificación de acceso administrativo
+        function verifyAdminAccess() {
+            if (!currentUser || currentUser.uid !== ADMIN_UID) {
+                showAlert('Acceso denegado. Solo el administrador puede realizar esta acción.', 'error');
+                return false;
+            }
+            return true;
         }
 
-        function renderUsers() {
+        // Log de eventos de seguridad
+        function logSecurityEvent(event, data = {}) {
+            const log = {
+                event: event,
+                timestamp: new Date().toISOString(),
+                user: currentUser?.email || 'unknown',
+                ...data
+            };
+            console.log('🔐 Evento de seguridad:', log);
+        }
+
+        // Configurar timeout de inactividad
+        function setupInactivityTimeout() {
+            let timeout;
+            const resetTimeout = () => {
+                clearTimeout(timeout);
+                timeout = setTimeout(() => {
+                    if (currentUser) {
+                        showAlert('Sesión expirada por inactividad', 'warning');
+                        secureLogout();
+                    }
+                }, 30 * 60 * 1000); // 30 minutos
+            };
+            
+            // Reset en eventos de usuario
+            ['mousedown', 'keydown', 'scroll'].forEach(event => {
+                document.addEventListener(event, resetTimeout);
+            });
+            
+            resetTimeout();
+        }
+
+        // Configurar listeners de seguridad
+        function setupSecurityListeners() {
+            // Prevenir clic derecho
+            document.addEventListener('contextmenu', (e) => {
+                if (currentUser) {
+                    e.preventDefault();
+                    showAlert('Acción restringida en modo administrador', 'warning');
+                }
+            });
+            
+            // Prevenir atajos de teclado
+            document.addEventListener('keydown', (e) => {
+                if (currentUser && (e.ctrlKey && (e.key === 'u' || e.key === 's' || e.key === 'p'))) {
+                    e.preventDefault();
+                    showAlert('Función deshabilitada por seguridad', 'warning');
+                }
+            });
+        }
+
+        // Mostrar/Ocultar pantallas
+        function showAuth() {
+            document.getElementById('authScreen').classList.remove('hidden');
+            document.getElementById('appScreen').classList.add('hidden');
+        }
+
+        function showApp() {
+            document.getElementById('authScreen').classList.add('hidden');
+            document.getElementById('appScreen').classList.remove('hidden');
+        }
+
+        // Alertas del sistema
+        function showAlert(message, type = 'info') {
+            const alertDiv = document.createElement('div');
+            alertDiv.className = `alert alert-${type}`;
+            alertDiv.innerHTML = `
+                <i class="fas fa-${type === 'error' ? 'exclamation-circle' : 
+                                  type === 'success' ? 'check-circle' : 
+                                  type === 'warning' ? 'exclamation-triangle' : 
+                                  'info-circle'}"></i>
+                <div>${message}</div>
+                <button onclick="this.parentElement.remove()" 
+                        style="margin-left: auto; background: none; border: none; cursor: pointer; color: inherit;">
+                    <i class="fas fa-times"></i>
+                </button>
+            `;
+            
+            const appScreen = document.getElementById('appScreen');
+            if (!appScreen.classList.contains('hidden')) {
+                appScreen.insertBefore(alertDiv, appScreen.firstChild);
+                
+                setTimeout(() => {
+                    if (alertDiv.parentElement) {
+                        alertDiv.remove();
+                    }
+                }, 5000);
+            }
+        }
+
+        function showAuthMessage(message, type) {
+            const messageDiv = document.getElementById('authMessage');
+            if (!messageDiv) return;
+            
+            messageDiv.className = `alert alert-${type}`;
+            messageDiv.innerHTML = `
+                <i class="fas fa-${type === 'error' ? 'exclamation-circle' : 'check-circle'}"></i>
+                <div>${message}</div>
+            `;
+            
+            setTimeout(() => {
+                messageDiv.innerHTML = '';
+                messageDiv.className = '';
+            }, 5000);
+        }
+
+        // Actualizar estado del sistema
+        function updateStatus(message) {
+            const statusEl = document.getElementById('firebaseStatus');
+            if (!statusEl) return;
+            
+            const icon = message.includes('🟢') ? 'check-circle' : 
+                        message.includes('🔴') ? 'times-circle' : 'sync-alt';
+            const color = message.includes('🟢') ? 'success' : 
+                         message.includes('🔴') ? 'error' : 'info';
+            
+            statusEl.className = `security-notice alert alert-${color}`;
+            statusEl.innerHTML = `
+                <i class="fas fa-${icon} ${icon === 'sync-alt' ? 'fa-spin' : ''}"></i>
+                <div>
+                    <strong>${message.replace(/[🟢🔴]/g, '').trim()}</strong>
+                    <p style="font-size: 12px; margin-top: 5px;">${new Date().toLocaleTimeString()}</p>
+                </div>
+            `;
+        }
+
+        // Filtrado de clientes
+        function filterClients() {
+            const searchTerm = document.getElementById('searchClient').value.toLowerCase();
+            renderUsers(searchTerm);
+        }
+
+        // Actualizar estadísticas
+        function updateStatistics() {
+            const clientCount = Object.keys(users).length;
+            let totalLoans = 0;
+            let totalPayments = 0;
+            let activeClients = 0;
+            
+            Object.values(users).forEach(user => {
+                if (user.loans && Array.isArray(user.loans)) {
+                    const total = user.loans.reduce((sum, loan) => sum + (parseFloat(loan.amount) || 0), 0);
+                    if (total !== 0) activeClients++;
+                    
+                    user.loans.forEach(loan => {
+                        if (loan.amount > 0) {
+                            totalLoans += loan.amount;
+                        } else {
+                            totalPayments += Math.abs(loan.amount);
+                        }
+                    });
+                }
+            });
+            
+            document.getElementById('totalClients').textContent = clientCount;
+            document.getElementById('totalLoans').textContent = `$${totalLoans.toFixed(2)}`;
+            document.getElementById('totalPayments').textContent = `$${totalPayments.toFixed(2)}`;
+        }
+
+        // Actualizar resumen del sistema
+        function updateSystemSummary() {
+            const clientCount = Object.keys(users).length;
+            let totalBalance = 0;
+            let activeClients = 0;
+            let pendingLoans = 0;
+            let totalLoans = 0;
+            let totalPayments = 0;
+            
+            Object.values(users).forEach(user => {
+                if (user.loans && Array.isArray(user.loans)) {
+                    const total = user.loans.reduce((sum, loan) => sum + (parseFloat(loan.amount) || 0), 0);
+                    totalBalance += total;
+                    if (total > 0) {
+                        activeClients++;
+                        pendingLoans++;
+                    } else if (total < 0) {
+                        activeClients++;
+                    }
+                    
+                    // Calcular total de préstamos y pagos
+                    user.loans.forEach(loan => {
+                        if (loan.amount > 0) {
+                            totalLoans += loan.amount;
+                        } else {
+                            totalPayments += Math.abs(loan.amount);
+                        }
+                    });
+                }
+            });
+            
+            document.getElementById('summaryTotal').textContent = `$${totalBalance.toFixed(2)}`;
+            document.getElementById('summaryActive').textContent = activeClients;
+            document.getElementById('summaryPending').textContent = pendingLoans;
+            
+            // Actualizar el resumen en el sidebar
+            const globalSummaryEl = document.getElementById('globalSummary');
+            if (globalSummaryEl) {
+                globalSummaryEl.innerHTML = `
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 10px;">
+                        <div class="stat-card" style="min-width: auto; padding: 12px;">
+                            <div class="stat-label">Clientes</div>
+                            <div class="stat-value" style="font-size: 1.5rem;">${clientCount}</div>
+                        </div>
+                        <div class="stat-card" style="min-width: auto; padding: 12px;">
+                            <div class="stat-label">Saldo Total</div>
+                            <div class="stat-value" style="font-size: 1.5rem; color: ${totalBalance >= 0 ? 'var(--success)' : 'var(--danger)'}">
+                                $${totalBalance.toFixed(2)}
+                            </div>
+                        </div>
+                        <div class="stat-card" style="min-width: auto; padding: 12px;">
+                            <div class="stat-label">Préstamos</div>
+                            <div class="stat-value" style="font-size: 1.5rem;">$${totalLoans.toFixed(2)}</div>
+                        </div>
+                        <div class="stat-card" style="min-width: auto; padding: 12px;">
+                            <div class="stat-label">Pagos</div>
+                            <div class="stat-value" style="font-size: 1.5rem;">$${totalPayments.toFixed(2)}</div>
+                        </div>
+                    </div>
+                `;
+            }
+        }
+
+        // Renderizar clientes
+        function renderUsers(filter = '') {
             const container = document.getElementById('usersContainer');
             
+            // DEPURACIÓN: Mostrar estado de users
+            console.log("🔄 Renderizando usuarios, total:", Object.keys(users).length);
+            console.log("Estado de users:", users);
+            
             if (Object.keys(users).length === 0) {
-                container.innerHTML = '<div class="empty-state">No hay clientes agregados. Agrega uno para comenzar.</div>';
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-users-slash"></i>
+                        <h3>Base de datos vacía</h3>
+                        <p>No hay clientes registrados en el sistema. Comience agregando su primer cliente.</p>
+                        <button class="btn btn-success mt-3" onclick="document.getElementById('userName').focus()">
+                            <i class="fas fa-user-plus"></i> Agregar primer cliente
+                        </button>
+                    </div>
+                `;
                 return;
             }
             
-            container.innerHTML = '';
+            let filteredUsers = Object.keys(users);
+            if (filter) {
+                filteredUsers = filteredUsers.filter(userName => 
+                    userName.toLowerCase().includes(filter)
+                );
+            }
             
-            for (const userName in users) {
+            if (filteredUsers.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-search"></i>
+                        <h3>No se encontraron clientes</h3>
+                        <p>No hay coincidencias para su búsqueda. Intente con otro término.</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            container.innerHTML = '<div class="clients-grid"></div>';
+            const grid = container.querySelector('.clients-grid');
+            
+            filteredUsers.forEach(userName => {
                 const userData = users[userName];
-                const loans = userData.loans || [];
+                
+                // ASEGURAR QUE loans SEA UN ARRAY
+                let loans = [];
+                if (userData && userData.loans) {
+                    loans = Array.isArray(userData.loans) ? userData.loans : [];
+                }
+                
+                // DEPURACIÓN POR USUARIO
+                if (!Array.isArray(loans)) {
+                    console.error(`⚠️ ERROR: loans no es array para ${userName}`, loans);
+                    loans = [];
+                }
+                
                 const total = calculateTotal(userName);
-                const totalClass = total >= 0 ? 'total-positive' : 'total-negative';
-                const sign = total >= 0 ? '' : '-';
+                const balanceClass = total > 0 ? 'positive' : total < 0 ? 'negative' : 'zero';
+                const balanceSign = total >= 0 ? '' : '-';
+                const phone = userData.phone || 'No registrado';
+                const notes = userData.notes || 'Sin notas';
+                const createdBy = userData.createdBy || 'Sistema';
                 
-                const userCard = document.createElement('div');
-                userCard.className = 'user-card';
+                const clientCard = document.createElement('div');
+                clientCard.className = 'client-card';
+                clientCard.setAttribute('data-user', userName);
                 
-                userCard.innerHTML = `
-                    <div class="user-header">
-                        <div class="user-name">${userName}</div>
-                        <button class="delete-user" onclick="deleteUser('${userName}')">Eliminar Cliente</button>
-                    </div>
-                    
-                    <div class="total-amount ${totalClass}">
-                        ${sign}$${Math.abs(total).toFixed(2)}
-                        <div style="font-size: 14px; color: #666; margin-top: 5px;">
-                            ${total >= 0 ? 'El cliente te debe:' : 'Le debes al cliente'}
-                        </div>
-                    </div>
-                    
-                    <div class="loan-input-section">
-                        <div class="input-group">
-                            <input type="number" id="loan-${userName}" placeholder="Monto (positivo=préstamo, negativo=pago)" step="0.01">
-                            <button onclick="addLoan('${userName}')">Agregar</button>
-                        </div>
-                        <small>Usa números positivos para préstamos, negativos para pagos</small>
-                    </div>
-                    
-                    <div class="loan-list">
-                        ${loans.length === 0 
-                            ? '<div class="empty-state">No hay movimientos registrados</div>' 
-                            : loans.map((loan, index) => {
-                                const isPositive = loan.amount >= 0;
-                                const amountClass = isPositive ? 'positive' : 'negative';
-                                const typeClass = isPositive ? 'loan-type-prestamo' : 'loan-type-pago';
-                                const typeText = isPositive ? 'PRÉSTAMO' : 'PAGO';
-                                
-                                return `
-                                <div class="loan-item">
-                                    <div>
-                                        <span class="loan-type-indicator ${typeClass}">${typeText}</span>
-                                        <span class="loan-amount ${amountClass}">${isPositive ? '+' : '-'}$${Math.abs(loan.amount).toFixed(2)}</span>
-                                        <div class="loan-date">${formatDate(loan.date)}</div>
-                                    </div>
-                                    <button class="delete-loan" onclick="deleteLoan('${userName}', ${index}, ${loan.amount})">Eliminar</button>
+                clientCard.innerHTML = `
+                    <div class="client-header">
+                        <div class="client-info">
+                            <div class="client-avatar">${userName.substring(0, 2).toUpperCase()}</div>
+                            <div class="client-details">
+                                <h3>${userName}</h3>
+                                <div class="client-meta">
+                                    <span><i class="fas fa-phone"></i> ${phone}</span>
+                                    <span><i class="fas fa-user-tag"></i> ${createdBy}</span>
                                 </div>
-                            `}).join('')
-                        }
+                            </div>
+                        </div>
+                        <div style="display: flex; gap: 5px;">
+                            <button class="btn btn-warning btn-sm" onclick="closeAccount('${userName}')" ${total === 0 ? 'disabled' : ''}>
+                                <i class="fas fa-lock"></i> Liquidar
+                            </button>
+                            <button class="btn btn-danger btn-sm" onclick="deleteUser('${userName}')">
+                                <i class="fas fa-trash-alt"></i> Eliminar
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="balance-container ${balanceClass}">
+                        <div class="balance-amount balance-${balanceClass}">
+                            ${balanceSign}$${Math.abs(total).toFixed(2)}
+                        </div>
+                        <div class="balance-label">
+                            ${total > 0 ? 'SALDO A FAVOR DEL SISTEMA' : 
+                            total < 0 ? 'SALDO A FAVOR DEL CLIENTE' : 'SALDO CERRADO'}
+                            <div style="font-size: 11px; margin-top: 5px; opacity: 0.7;">
+                                ${loans.length} movimiento(s) registrado(s)
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="movement-form">
+                        <div class="form-group mb-3">
+                            <input type="number" id="loan-${userName}" 
+                                class="form-control" 
+                                placeholder="Monto (positivo=préstamo, negativo=pago)" 
+                                step="0.01"
+                                autocomplete="off">
+                            <div class="form-note">
+                                <i class="fas fa-info-circle"></i> 
+                                Positivo: entrega de préstamo | Negativo: recepción de pago
+                            </div>
+                        </div>
+                        <button class="btn btn-primary btn-block" onclick="addLoan('${userName}')">
+                            <i class="fas fa-plus-circle"></i> Registrar Movimiento
+                        </button>
+                    </div>
+                    
+                    ${notes !== 'Sin notas' ? `
+                    <div class="alert alert-info mb-3">
+                        <i class="fas fa-sticky-note"></i>
+                        <div><strong>Notas:</strong> ${notes}</div>
+                    </div>
+                    ` : ''}
+                    
+                    <h4 class="section-title" style="font-size: 0.9rem; margin-bottom: 15px;">
+                        <i class="fas fa-history"></i> Historial de Movimientos (${loans.length})
+                    </h4>
+                    
+                    <div class="movements-list">
+                        ${loans.length === 0 ? `
+                            <div class="empty-state" style="padding: 20px;">
+                                <i class="fas fa-receipt"></i>
+                                <p style="font-size: 0.9rem;">No hay movimientos registrados</p>
+                            </div>
+                        ` : loans.map((loan, index) => {
+                            let typeClass, typeText;
+                            if (loan && loan.type === 'ajuste') {
+                                typeClass = 'type-adjustment';
+                                typeText = 'AJUSTE';
+                            } else {
+                                const isLoan = loan && loan.amount >= 0;
+                                typeClass = isLoan ? 'type-loan' : 'type-payment';
+                                typeText = isLoan ? 'PRÉSTAMO' : 'PAGO';
+                            }
+                            
+                            const processedBy = loan.processedBy ? `<br><small>Por: ${loan.processedBy}</small>` : '';
+                            const amount = loan ? Math.abs(loan.amount || 0).toFixed(2) : '0.00';
+                            const note = loan.note ? `<br><small><i>${loan.note}</i></small>` : '';
+                            
+                            return `
+                            <div class="movement-item ${loan && loan.type === 'ajuste' ? 'adjustment' : (loan && loan.amount >= 0 ? 'loan' : 'payment')}">
+                                <div class="movement-details">
+                                    <div>
+                                        <span class="movement-type ${typeClass}">${typeText}</span>
+                                        <span class="movement-amount" style="color: ${loan && loan.type === 'ajuste' ? '#9b59b6' : (loan && loan.amount >= 0 ? '#27ae60' : '#e74c3c')}">
+                                            ${loan && loan.amount >= 0 ? '+' : '-'}$${amount}
+                                        </span>
+                                    </div>
+                                    <div class="movement-date">
+                                        ${loan && loan.date ? formatDate(loan.date) : 'Fecha desconocida'}${processedBy}${note}
+                                    </div>
+                                </div>
+                                <button class="btn btn-danger btn-sm" onclick="deleteLoan('${userName}', ${index}, ${loan ? loan.amount : 0})">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </div>
+                            `;
+                        }).join('')}
                     </div>
                 `;
                 
-                container.appendChild(userCard);
+                grid.appendChild(clientCard);
+            });
+        }
+
+        // Modal functions
+        function openModal(title, message, onConfirm) {
+            const modal = document.getElementById('confirmModal');
+            if (modal) {
+                document.getElementById('modalTitle').textContent = title;
+                document.getElementById('modalMessage').innerHTML = message;
+                
+                const confirmBtn = document.getElementById('confirmActionBtn');
+                confirmBtn.onclick = function() {
+                    if (onConfirm && typeof onConfirm === 'function') {
+                        onConfirm();
+                    }
+                    closeModal();
+                };
+                
+                modal.classList.add('active');
             }
         }
 
-        function initEventListeners() {
-            const loginPassword = document.getElementById('loginPassword');
-            if (loginPassword) {
-                loginPassword.addEventListener('keypress', (e) => {
-                    if (e.key === 'Enter') login();
-                });
+        function closeModal() {
+            const modal = document.getElementById('confirmModal');
+            if (modal) {
+                modal.classList.remove('active');
             }
+        }
+
+        function showSystemInfo() {
+            const infoModal = document.getElementById('infoModal');
+            if (infoModal) {
+                infoModal.classList.remove('hidden');
+            }
+        }
+
+        function closeInfoModal() {
+            const infoModal = document.getElementById('infoModal');
+            if (infoModal) {
+                infoModal.classList.add('hidden');
+            }
+        }
+
+        // === FUNCIÓN PARA CORREGIR DATOS CORRUPTOS ===
+        async function fixCorruptedData() {
+            if (!verifyAdminAccess()) return;
             
-            const userNameInput = document.getElementById('userName');
-            if (userNameInput) {
-                userNameInput.addEventListener('keypress', (e) => {
-                    if (e.key === 'Enter') addUser();
-                });
-            }
+            // Usar modal de confirmación
+            openModal(
+                'Corrección de Datos',
+                '⚠️ <strong>ADVERTENCIA DE SEGURIDAD</strong><br><br>' +
+                'Esta operación corregirá todos los datos corruptos en la base de datos.<br><br>' +
+                '<strong>¿Está seguro de continuar?</strong>',
+                async () => {
+                    try {
+                        showAlert('🛠️ Iniciando corrección de datos...', 'info');
+                        
+                        let fixedCount = 0;
+                        let errors = [];
+                        
+                        // Crear una copia de los usuarios para no modificar durante la iteración
+                        const usersCopy = { ...users };
+                        
+                        for (const userName in usersCopy) {
+                            try {
+                                const user = usersCopy[userName];
+                                let needsFix = false;
+                                
+                                console.log(`🔍 Verificando usuario: ${userName}`);
+                                
+                                // 1. Asegurar que loans sea array
+                                if (!user.loans || !Array.isArray(user.loans)) {
+                                    console.log(`  ⚠️ Corrigiendo: loans no era array para ${userName}`);
+                                    user.loans = [];
+                                    needsFix = true;
+                                }
+                                
+                                // 2. Filtrar elementos no válidos en loans
+                                if (Array.isArray(user.loans)) {
+                                    const originalLength = user.loans.length;
+                                    user.loans = user.loans.filter(loan => {
+                                        // Validar que cada loan sea un objeto válido
+                                        return loan && 
+                                            typeof loan === 'object' && 
+                                            'amount' in loan &&
+                                            !isNaN(parseFloat(loan.amount));
+                                    });
+                                    
+                                    if (originalLength !== user.loans.length) {
+                                        console.log(`  ⚠️ ${userName}: removidos ${originalLength - user.loans.length} movimientos inválidos`);
+                                        needsFix = true;
+                                    }
+                                }
+                                
+                                // 3. Asegurar campos obligatorios
+                                if (!user.createdAt || typeof user.createdAt !== 'number') {
+                                    user.createdAt = Date.now();
+                                    needsFix = true;
+                                }
+                                
+                                if (!user.updatedAt || typeof user.updatedAt !== 'number') {
+                                    user.updatedAt = Date.now();
+                                    needsFix = true;
+                                }
+                                
+                                if (!user.createdBy) {
+                                    user.createdBy = currentUser.email || 'Sistema';
+                                    needsFix = true;
+                                }
+                                
+                                // 4. Guardar si hubo cambios
+                                if (needsFix) {
+                                    await set(ref(db, 'loans/' + userName), user);
+                                    fixedCount++;
+                                    console.log(`  ✅ ${userName}: corregido`);
+                                }
+                                
+                            } catch (userError) {
+                                console.error(`❌ Error procesando ${userName}:`, userError);
+                                errors.push(`${userName}: ${userError.message}`);
+                            }
+                        }
+                        
+                        // 5. Cargar datos actualizados
+                        await loadSecureData();
+                        
+                        // 6. Mostrar resultado
+                        let message = '';
+                        if (fixedCount > 0) {
+                            message = `✅ <strong>${fixedCount} cliente(s) corregido(s) exitosamente</strong><br>`;
+                        } else {
+                            message = '✅ <strong>Todos los datos están correctos</strong><br>No se necesitó corrección';
+                        }
+                        
+                        if (errors.length > 0) {
+                            message += `<br>⚠️ <strong>Errores encontrados (${errors.length}):</strong><br>`;
+                            errors.forEach(error => {
+                                message += `• ${error}<br>`;
+                            });
+                        }
+                        
+                        showAlert(message, fixedCount > 0 ? 'success' : 'info');
+                        
+                        // Log de actividad
+                        logSecurityEvent('DATA_FIXED', {
+                            fixedCount,
+                            errorCount: errors.length,
+                            by: currentUser.email
+                        });
+                        
+                    } catch (error) {
+                        console.error('❌ Error general en fixCorruptedData:', error);
+                        showAlert(`❌ Error al corregir datos: ${error.message}`, 'error');
+                    }
+                }
+            );
         }
 
-        // Hacer las funciones disponibles globalmente
+        // Event Listeners
+        function initEventListeners() {
+            // Login con Enter
+            document.getElementById('loginPassword')?.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') login();
+            });
+            
+            // Agregar cliente con Enter
+            document.getElementById('userName')?.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    addUser();
+                }
+            });
+            
+            // Cerrar modales con ESC
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape') {
+                    closeModal();
+                    closeInfoModal();
+                }
+            });
+        }
+
+        // Hacer funciones globalmente disponibles
         window.login = login;
-        window.logout = logout;
+        window.secureLogout = secureLogout;
         window.addUser = addUser;
         window.deleteUser = deleteUser;
         window.addLoan = addLoan;
+        window.closeAccount = closeAccount;
         window.deleteLoan = deleteLoan;
+        window.filterClients = filterClients;
+        window.exportToCSV = exportToCSV;
+        window.closeModal = closeModal;
+        window.closeInfoModal = closeInfoModal;
+        window.showSystemInfo = showSystemInfo;
+        window.showAlert = showAlert;
+        window.fixCorruptedData = fixCorruptedData;
     </script>
 </body>
 </html>
