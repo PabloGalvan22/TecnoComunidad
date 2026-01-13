@@ -242,7 +242,11 @@
 <body>
     <div class="container">
         <h1>💰 Gestor de Préstamos</h1>
-
+        
+        <div id="firebaseStatus" class="firebase-status">
+            Configurando conexión con Firebase...
+        </div>
+        
         <div class="add-user-section">
             <h2>Agregar Nuevo Usuario</h2>
             <div class="input-group">
@@ -277,31 +281,34 @@
         let usersRef;
         let users = {};
 
-        // Inicializar Firebase
-        try {
-            if (typeof firebase === 'undefined') {
-                throw new Error('Firebase no se cargó correctamente. Verifica tu conexión a internet.');
+        // Esperar a que el DOM esté listo
+        document.addEventListener('DOMContentLoaded', function() {
+            // Inicializar Firebase
+            try {
+                if (typeof firebase === 'undefined') {
+                    throw new Error('Firebase no se cargó correctamente. Verifica tu conexión a internet.');
+                }
+                
+                firebase.initializeApp(firebaseConfig);
+                db = firebase.database();
+                usersRef = db.ref('users');
+                
+                updateStatus('Conectado a Firebase ✓', 'connected');
+                
+                // Escuchar cambios en tiempo real
+                usersRef.on('value', (snapshot) => {
+                    users = snapshot.val() || {};
+                    renderUsers();
+                }, (error) => {
+                    console.error('Error al leer datos:', error);
+                    updateStatus('Error: Verifica las reglas de Firebase Database', 'error');
+                });
+                
+            } catch (error) {
+                console.error('Error al inicializar Firebase:', error);
+                updateStatus('Error: ' + error.message, 'error');
             }
-            
-            firebase.initializeApp(firebaseConfig);
-            db = firebase.database();
-            usersRef = db.ref('users');
-            
-            updateStatus('Conectado a Firebase ✓', 'connected');
-            
-            // Escuchar cambios en tiempo real
-            usersRef.on('value', (snapshot) => {
-                users = snapshot.val() || {};
-                renderUsers();
-            }, (error) => {
-                console.error('Error al leer datos:', error);
-                updateStatus('Error: Verifica las reglas de Firebase Database', 'error');
-            });
-            
-        } catch (error) {
-            console.error('Error al inicializar Firebase:', error);
-            updateStatus('Error: ' + error.message, 'error');
-        }
+        });
 
         function updateStatus(message, type) {
             const statusEl = document.getElementById('firebaseStatus');
@@ -455,12 +462,22 @@
             }
         }
 
-        // Manejo de eventos del teclado
-        document.getElementById('userName').addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') addUser();
-        });
+        // Manejo de eventos del teclado (dentro del DOMContentLoaded)
+        function initEventListeners() {
+            const userNameInput = document.getElementById('userName');
+            if (userNameInput) {
+                userNameInput.addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter') addUser();
+                });
+            }
+        }
 
-        renderUsers();
+        // Inicializar cuando el DOM esté listo
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initEventListeners);
+        } else {
+            initEventListeners();
+        }
     </script>
 </body>
 </html>
