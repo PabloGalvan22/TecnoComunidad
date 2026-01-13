@@ -459,6 +459,7 @@
             top: 50%;
             transform: translateY(-50%);
             color: var(--gray);
+            z-index: 2;
         }
 
         .search-container input {
@@ -468,14 +469,24 @@
             border-radius: 10px;
             font-size: 14px;
             background: white;
-            color: var(--dark);
+            color: #333333; /* Color oscuro fijo para mejor visibilidad */
             transition: all 0.3s;
+            position: relative;
+            z-index: 1;
         }
 
         .search-container input:focus {
             outline: none;
             border-color: var(--primary);
             box-shadow: 0 0 0 3px rgba(44, 62, 80, 0.1);
+            background: white;
+            color: #333333; /* Mantener color oscuro en focus */
+        }
+
+        /* Placeholder del input de búsqueda */
+        .search-container input::placeholder {
+            color: #666666; /* Color gris oscuro para mejor visibilidad */
+            opacity: 0.8;
         }
 
         /* Grid de Clientes */
@@ -952,6 +963,11 @@
                 padding: 30px 20px;
                 margin: 20px;
             }
+            
+            .search-container {
+                max-width: 100%;
+                margin-top: 15px;
+            }
         }
 
         /* Efectos especiales */
@@ -984,7 +1000,7 @@
             background: var(--primary-dark);
         }
 
-        /* Tema oscuro opcional */
+        /* Tema oscuro opcional - CORREGIDO */
         @media (prefers-color-scheme: dark) {
             :root {
                 --primary: #3498db;
@@ -1006,17 +1022,110 @@
             
             .form-control {
                 background: #2c3e50;
-                color: white;
+                color: #f8f9fa;
                 border-color: #4a5f7a;
             }
             
             .form-control:focus {
                 background: #34495e;
-                color: white;
+                color: #f8f9fa;
             }
             
             .movement-item:hover {
                 background: #2c3e50;
+            }
+            
+            /* CORRECCIÓN: Input de búsqueda en tema oscuro */
+            .search-container input {
+                background: #2c3e50;
+                color: #f8f9fa !important;
+                border-color: #4a5f7a;
+            }
+            
+            .search-container input:focus {
+                background: #34495e;
+                color: #f8f9fa !important;
+                border-color: var(--primary);
+                box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
+            }
+            
+            .search-container input::placeholder {
+                color: #bdc3c7 !important;
+                opacity: 0.7;
+            }
+            
+            .search-container i {
+                color: #bdc3c7;
+            }
+            
+            /* También corregir inputs dentro de las tarjetas de cliente */
+            .movement-form .form-control {
+                background: #2c3e50;
+                color: #f8f9fa;
+                border-color: #4a5f7a;
+            }
+            
+            .movement-form .form-control:focus {
+                background: #34495e;
+                color: #f8f9fa;
+            }
+            
+            .movement-form .form-control::placeholder {
+                color: #bdc3c7;
+            }
+            
+            /* Inputs en el sidebar */
+            .sidebar .form-control {
+                background: #2c3e50;
+                color: #f8f9fa;
+                border-color: #4a5f7a;
+            }
+            
+            .sidebar .form-control:focus {
+                background: #34495e;
+                color: #f8f9fa;
+            }
+            
+            .sidebar .form-control::placeholder {
+                color: #bdc3c7;
+            }
+            
+            /* Inputs en login */
+            .auth-card .form-control {
+                background: #2c3e50;
+                color: #f8f9fa;
+                border-color: #4a5f7a;
+            }
+            
+            .auth-card .form-control:focus {
+                background: #34495e;
+                color: #f8f9fa;
+            }
+            
+            .auth-card .form-control::placeholder {
+                color: #bdc3c7;
+            }
+        }
+
+        /* Forzar colores visibles incluso si no está en tema oscuro */
+        .search-container input {
+            color: #333333 !important;
+            background-color: white !important;
+        }
+        
+        .search-container input::placeholder {
+            color: #666666 !important;
+        }
+        
+        /* Sobreescribir cualquier regla de tema oscuro */
+        @media (prefers-color-scheme: dark) {
+            .search-container input {
+                color: #f8f9fa !important;
+                background-color: #2c3e50 !important;
+            }
+            
+            .search-container input::placeholder {
+                color: #bdc3c7 !important;
             }
         }
     </style>
