@@ -199,7 +199,6 @@
 
         .total-amount {
             font-size: 2em;
-            color: #2ecc71;
             font-weight: bold;
             text-align: center;
             margin: 15px 0;
@@ -208,8 +207,22 @@
             border-radius: 10px;
         }
 
+        .total-positive {
+            color: #2ecc71; /* Verde para saldo positivo */
+        }
+
+        .total-negative {
+            color: #e74c3c; /* Rojo para saldo negativo */
+        }
+
         .loan-input-section {
             margin: 15px 0;
+        }
+
+        .input-group small {
+            font-size: 12px;
+            color: #666;
+            margin-top: 5px;
         }
 
         .loan-list {
@@ -230,7 +243,14 @@
 
         .loan-amount {
             font-weight: bold;
-            color: #667eea;
+        }
+
+        .loan-amount.positive {
+            color: #2ecc71; /* Verde para préstamos (positivo) */
+        }
+
+        .loan-amount.negative {
+            color: #e74c3c; /* Rojo para pagos (negativo) */
         }
 
         .loan-date {
@@ -285,6 +305,33 @@
             display: block;
             margin-bottom: 5px;
         }
+        
+        .success-message {
+            background: #d4edda;
+            color: #155724;
+            padding: 10px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            text-align: center;
+            border: 1px solid #c3e6cb;
+        }
+        
+        .loan-type-indicator {
+            font-size: 12px;
+            padding: 2px 6px;
+            border-radius: 4px;
+            margin-right: 5px;
+        }
+        
+        .loan-type-prestamo {
+            background: #d4edda;
+            color: #155724;
+        }
+        
+        .loan-type-pago {
+            background: #f8d7da;
+            color: #721c24;
+        }
     </style>
 </head>
 <body>
@@ -298,8 +345,8 @@
             
             <div id="loginForm">
                 <div class="input-group" style="flex-direction: column;">
-                    <input type="email" id="loginEmail" placeholder="Correo electrónico del administrador">
-                    <input type="password" id="loginPassword" placeholder="Contraseña">
+                    <input type="email" id="loginEmail" placeholder="Correo electrónico del administrador" value="pablogalvan560@gmail.com">
+                    <input type="password" id="loginPassword" placeholder="Contraseña" value="123456">
                 </div>
                 <button onclick="login()" style="width: 100%; margin-top: 10px;">Iniciar Sesión</button>
             </div>
@@ -318,7 +365,7 @@
             </div>
 
             <div id="firebaseStatus" class="firebase-status">
-                Conectado a Firebase ✓
+                Conectando a Firebase...
             </div>
             
             <div class="add-user-section">
@@ -335,66 +382,74 @@
         </div>
     </div>
 
-    <!-- Firebase SDK -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/9.22.0/firebase-app-compat.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/9.22.0/firebase-database-compat.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/9.22.0/firebase-auth-compat.min.js"></script>
+    <!-- Firebase SDK v9 Modular (ES modules via CDN) -->
+    <script type="module">
+        // Import the functions you need from the SDKs you need
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
+        import { getDatabase, ref, set, onValue, remove, child } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-database.js";
+        import { 
+            getAuth, 
+            signInWithEmailAndPassword, 
+            createUserWithEmailAndPassword,
+            signOut,
+            onAuthStateChanged
+        } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js";
 
-    <script>
-        // Configuración de Firebase
+        // Your web app's Firebase configuration
         const firebaseConfig = {
-            apiKey: "AIzaSyBrtfjepFvq-M0WI5as70kHE2kKH-j46xb0",
+            apiKey: "AIzaSyBrfjepFvq-M0WI5as7OkHE2kKH-j46xb0",
             authDomain: "cobroprestamo22.firebaseapp.com",
             databaseURL: "https://cobroprestamo22-default-rtdb.firebaseio.com",
             projectId: "cobroprestamo22",
             storageBucket: "cobroprestamo22.firebasestorage.app",
             messagingSenderId: "349047636162",
             appId: "1:349047636162:web:b410ea248fe0fa7854bb5b",
-            measurementId: "G-VZGWMKZSKX"
+            measurementId: "G-VZGWWKZSKX"
         };
 
-        // Email del administrador autorizado
+        // Credenciales del administrador autorizado
         const ADMIN_EMAIL = "pablogalvan560@gmail.com";
+        const ADMIN_UID = "tygoYRR0YEadoTA02VEooq2m2Dj1";
+        const ADMIN_PASSWORD = "123456&";
 
-        let db;
-        let auth;
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+        const auth = getAuth(app);
+        
         let usersRef;
         let users = {};
         let currentUser = null;
 
         document.addEventListener('DOMContentLoaded', function() {
-            try {
-                if (typeof firebase === 'undefined') {
-                    throw new Error('Firebase no se cargó correctamente.');
-                }
-                
-                firebase.initializeApp(firebaseConfig);
-                db = firebase.database();
-                auth = firebase.auth();
-                
-                // Observar cambios en la autenticación
-                auth.onAuthStateChanged((user) => {
-                    if (user) {
-                        // Verificar que sea el admin autorizado
-                        if (user.email === ADMIN_EMAIL || ADMIN_EMAIL === "pablogalvan560@gmail.com") {
-                            currentUser = user;
-                            showApp();
-                            loadUserData();
-                        } else {
-                            // Si no es el admin, cerrar sesión
-                            auth.signOut();
-                            showAuthMessage('Acceso denegado. Solo el administrador puede acceder.', 'error');
-                        }
+            console.log("DOM cargado, inicializando Firebase...");
+            
+            // Observar cambios en la autenticación
+            onAuthStateChanged(auth, (user) => {
+                console.log("Estado de autenticación cambiado:", user);
+                if (user) {
+                    // Verificar que sea el admin autorizado por email O por UID
+                    console.log("Usuario autenticado - Email:", user.email, "UID:", user.uid);
+                    console.log("ADMIN_EMAIL:", ADMIN_EMAIL, "ADMIN_UID:", ADMIN_UID);
+                    console.log("¿Email coincide?:", user.email === ADMIN_EMAIL);
+                    console.log("¿UID coincide?:", user.uid === ADMIN_UID);
+                    
+                    if (user.email === ADMIN_EMAIL || user.uid === ADMIN_UID) {
+                        console.log("Acceso permitido para admin");
+                        currentUser = user;
+                        showApp();
+                        loadUserData();
                     } else {
-                        currentUser = null;
-                        showAuth();
+                        console.log("Acceso denegado - no es admin");
+                        signOut(auth);
+                        showAuthMessage('Acceso denegado. Solo el administrador puede acceder.', 'error');
                     }
-                });
-                
-            } catch (error) {
-                console.error('Error al inicializar Firebase:', error);
-                showAuthMessage('Error: ' + error.message, 'error');
-            }
+                } else {
+                    console.log("No hay usuario autenticado");
+                    currentUser = null;
+                    showAuth();
+                }
+            });
 
             initEventListeners();
         });
@@ -420,24 +475,57 @@
             }
             
             try {
-                await auth.signInWithEmailAndPassword(email, password);
+                console.log("Intentando iniciar sesión con:", email);
+                const userCredential = await signInWithEmailAndPassword(auth, email, password);
+                console.log("Login exitoso:", userCredential.user);
             } catch (error) {
                 console.error('Error al iniciar sesión:', error);
+                console.error('Código de error:', error.code);
+                console.error('Mensaje de error:', error.message);
+                
                 let message = 'Acceso denegado';
+                
+                // Si el usuario no existe, intentar crearlo automáticamente
                 if (error.code === 'auth/user-not-found') {
-                    message = 'Usuario no autorizado';
+                    console.log("Usuario no encontrado, intentando crear...");
+                    // Solo crear si es el email del admin
+                    if (email === ADMIN_EMAIL) {
+                        try {
+                            console.log("Creando usuario administrador...");
+                            const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+                            console.log("Usuario administrador creado:", userCredential.user);
+                            message = 'Usuario administrador creado exitosamente. Ahora inicia sesión.';
+                            showAuthMessage(message, 'success');
+                            // Cerrar sesión para que inicien con las nuevas credenciales
+                            await signOut(auth);
+                            return;
+                        } catch (createError) {
+                            console.error('Error al crear usuario:', createError);
+                            console.error('Código de error (creación):', createError.code);
+                            message = 'Error al crear el usuario administrador. Código: ' + createError.code;
+                        }
+                    } else {
+                        message = 'Usuario no autorizado. Solo el administrador puede acceder.';
+                    }
                 } else if (error.code === 'auth/wrong-password') {
                     message = 'Contraseña incorrecta';
                 } else if (error.code === 'auth/invalid-email') {
                     message = 'Correo electrónico inválido';
+                } else if (error.code === 'auth/too-many-requests') {
+                    message = 'Demasiados intentos. Por favor intenta más tarde.';
+                } else if (error.code === 'auth/network-request-failed') {
+                    message = 'Error de red. Verifica tu conexión a internet.';
+                } else if (error.code === 'auth/operation-not-allowed') {
+                    message = 'Método de autenticación no habilitado. Contacta al administrador.';
                 }
+                
                 showAuthMessage(message, 'error');
             }
         }
 
         async function logout() {
             try {
-                await auth.signOut();
+                await signOut(auth);
             } catch (error) {
                 console.error('Error al cerrar sesión:', error);
                 alert('Error al cerrar sesión');
@@ -446,6 +534,8 @@
 
         function showAuthMessage(message, type) {
             const messageDiv = document.getElementById('authMessage');
+            if (!messageDiv) return;
+            
             messageDiv.className = type === 'error' ? 'error-message' : 'success-message';
             messageDiv.textContent = message;
             
@@ -457,15 +547,19 @@
         function loadUserData() {
             if (!currentUser) return;
             
+            console.log("Cargando datos de Firebase...");
             // Todos los datos en una sola ubicación centralizada
-            usersRef = db.ref('loans');
+            usersRef = ref(db, 'loans');
             
-            usersRef.on('value', (snapshot) => {
+            onValue(usersRef, (snapshot) => {
+                console.log("Datos recibidos de Firebase:", snapshot.val());
                 users = snapshot.val() || {};
                 renderUsers();
+                updateStatus('Conectado a Firebase ✓', 'connected');
             }, (error) => {
                 console.error('Error al leer datos:', error);
-                updateStatus('Error: Verifica las reglas de Firebase Database', 'error');
+                console.error('Código de error:', error.code);
+                updateStatus('Error al cargar datos: ' + error.code, 'error');
             });
         }
 
@@ -499,23 +593,25 @@
             }
             
             try {
-                await usersRef.child(name).set({
+                console.log("Agregando cliente:", name);
+                await set(ref(db, 'loans/' + name), {
                     loans: [],
                     createdAt: Date.now()
                 });
                 nameInput.value = '';
             } catch (error) {
                 console.error('Error al agregar cliente:', error);
-                alert('Error al agregar cliente');
+                console.error('Código de error:', error.code);
+                alert('Error al agregar cliente: ' + error.code);
             }
         }
 
         async function deleteUser(name) {
             if (!currentUser) return;
             
-            if (confirm(`¿Estás seguro de eliminar a ${name}?`)) {
+            if (confirm(`¿Estás seguro de eliminar a ${name}? Se perderán todos sus préstamos y pagos.`)) {
                 try {
-                    await usersRef.child(name).remove();
+                    await remove(ref(db, 'loans/' + name));
                 } catch (error) {
                     console.error('Error al eliminar cliente:', error);
                     alert('Error al eliminar cliente');
@@ -529,8 +625,8 @@
             const input = document.getElementById(`loan-${userName}`);
             const amount = parseFloat(input.value);
             
-            if (isNaN(amount) || amount <= 0) {
-                alert('Por favor ingresa un monto válido');
+            if (isNaN(amount) || amount === 0) {
+                alert('Por favor ingresa un monto válido (diferente de cero)');
                 return;
             }
             
@@ -541,7 +637,7 @@
                     date: Date.now()
                 });
                 
-                await usersRef.child(userName).child('loans').set(loans);
+                await set(ref(db, 'loans/' + userName + '/loans'), loans);
                 input.value = '';
             } catch (error) {
                 console.error('Error al agregar préstamo:', error);
@@ -549,16 +645,21 @@
             }
         }
 
-        async function deleteLoan(userName, index) {
+        async function deleteLoan(userName, index, amount) {
             if (!currentUser) return;
             
-            try {
-                const loans = [...users[userName].loans];
-                loans.splice(index, 1);
-                await usersRef.child(userName).child('loans').set(loans);
-            } catch (error) {
-                console.error('Error al eliminar préstamo:', error);
-                alert('Error al eliminar préstamo');
+            const tipo = amount >= 0 ? 'préstamo' : 'pago';
+            const confirmMessage = `¿Estás seguro de eliminar este ${tipo} de $${Math.abs(amount).toFixed(2)}?`;
+            
+            if (confirm(confirmMessage)) {
+                try {
+                    const loans = [...users[userName].loans];
+                    loans.splice(index, 1);
+                    await set(ref(db, 'loans/' + userName + '/loans'), loans);
+                } catch (error) {
+                    console.error('Error al eliminar préstamo:', error);
+                    alert('Error al eliminar préstamo');
+                }
             }
         }
 
@@ -572,8 +673,14 @@
             return date.toLocaleDateString('es-MX', { 
                 day: '2-digit', 
                 month: '2-digit', 
-                year: 'numeric' 
+                year: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
             });
+        }
+
+        function getLoanType(amount) {
+            return amount >= 0 ? 'préstamo' : 'pago';
         }
 
         function renderUsers() {
@@ -590,6 +697,8 @@
                 const userData = users[userName];
                 const loans = userData.loans || [];
                 const total = calculateTotal(userName);
+                const totalClass = total >= 0 ? 'total-positive' : 'total-negative';
+                const sign = total >= 0 ? '' : '-';
                 
                 const userCard = document.createElement('div');
                 userCard.className = 'user-card';
@@ -597,32 +706,43 @@
                 userCard.innerHTML = `
                     <div class="user-header">
                         <div class="user-name">${userName}</div>
-                        <button class="delete-user" onclick="deleteUser('${userName}')">Eliminar</button>
+                        <button class="delete-user" onclick="deleteUser('${userName}')">Eliminar Cliente</button>
                     </div>
                     
-                    <div class="total-amount">
-                        $${total.toFixed(2)}
+                    <div class="total-amount ${totalClass}">
+                        ${sign}$${Math.abs(total).toFixed(2)}
+                        <div style="font-size: 14px; color: #666; margin-top: 5px;">
+                            ${total >= 0 ? 'Saldo a favor del cliente' : 'Saldo a favor tuyo'}
+                        </div>
                     </div>
                     
                     <div class="loan-input-section">
                         <div class="input-group">
-                            <input type="number" id="loan-${userName}" placeholder="Monto del préstamo" step="0.01">
+                            <input type="number" id="loan-${userName}" placeholder="Monto (positivo=préstamo, negativo=pago)" step="0.01">
                             <button onclick="addLoan('${userName}')">Agregar</button>
                         </div>
+                        <small>Usa números positivos para préstamos, negativos para pagos</small>
                     </div>
                     
                     <div class="loan-list">
                         ${loans.length === 0 
-                            ? '<div class="empty-state">No hay préstamos registrados</div>' 
-                            : loans.map((loan, index) => `
+                            ? '<div class="empty-state">No hay movimientos registrados</div>' 
+                            : loans.map((loan, index) => {
+                                const isPositive = loan.amount >= 0;
+                                const amountClass = isPositive ? 'positive' : 'negative';
+                                const typeClass = isPositive ? 'loan-type-prestamo' : 'loan-type-pago';
+                                const typeText = isPositive ? 'PRÉSTAMO' : 'PAGO';
+                                
+                                return `
                                 <div class="loan-item">
                                     <div>
-                                        <span class="loan-amount">$${loan.amount.toFixed(2)}</span>
+                                        <span class="loan-type-indicator ${typeClass}">${typeText}</span>
+                                        <span class="loan-amount ${amountClass}">${isPositive ? '+' : '-'}$${Math.abs(loan.amount).toFixed(2)}</span>
                                         <div class="loan-date">${formatDate(loan.date)}</div>
                                     </div>
-                                    <button class="delete-loan" onclick="deleteLoan('${userName}', ${index})">Eliminar</button>
+                                    <button class="delete-loan" onclick="deleteLoan('${userName}', ${index}, ${loan.amount})">Eliminar</button>
                                 </div>
-                            `).join('')
+                            `}).join('')
                         }
                     </div>
                 `;
@@ -646,6 +766,14 @@
                 });
             }
         }
+
+        // Hacer las funciones disponibles globalmente
+        window.login = login;
+        window.logout = logout;
+        window.addUser = addUser;
+        window.deleteUser = deleteUser;
+        window.addLoan = addLoan;
+        window.deleteLoan = deleteLoan;
     </script>
 </body>
 </html>
