@@ -2112,8 +2112,9 @@
 
         // Filtrado de clientes
         function filterClients() {
-            const searchTerm = document.getElementById('searchClient').value.toLowerCase();
-            renderUsers(searchTerm);
+            const searchInput = document.getElementById('searchClient');
+            const filter = searchInput.value.trim().toLowerCase();
+            renderUsers(filter);
         }
 
         // Actualizar estadísticas
@@ -2210,9 +2211,8 @@
         function renderUsers(filter = '') {
             const container = document.getElementById('usersContainer');
             
-            // DEPURACIÓN: Mostrar estado de users
-            console.log("🔄 Renderizando usuarios, total:", Object.keys(users).length);
-            console.log("Estado de users:", users);
+            console.log(`🔄 Renderizando usuarios. Filtro: "${filter}"`);
+            console.log(`📊 Total de usuarios: ${Object.keys(users).length}`);
             
             if (Object.keys(users).length === 0) {
                 container.innerHTML = `
@@ -2233,20 +2233,56 @@
                 filteredUsers = filteredUsers.filter(userName => 
                     userName.toLowerCase().includes(filter)
                 );
+                console.log(`✅ Usuarios filtrados: ${filteredUsers.length} de ${Object.keys(users).length}`);
+            }
+            
+            // Agregar un mensaje de resultados
+            let resultsHeader = '';
+            if (filter && filter.trim() !== '') {
+                resultsHeader = `
+                    <div class="alert alert-info mb-3">
+                        <i class="fas fa-search"></i>
+                        <div>
+                            <strong>Resultados de búsqueda:</strong> 
+                            Encontrados ${filteredUsers.length} de ${Object.keys(users).length} clientes
+                            ${filteredUsers.length > 0 ? `para "${filter}"` : ''}
+                        </div>
+                        ${filteredUsers.length === 0 ? `
+                            <button class="btn btn-sm btn-outline-primary mt-2" 
+                                    onclick="document.getElementById('searchClient').value=''; filterClients();">
+                                <i class="fas fa-times"></i> Limpiar búsqueda
+                            </button>
+                        ` : ''}
+                    </div>
+                `;
             }
             
             if (filteredUsers.length === 0) {
                 container.innerHTML = `
+                    ${resultsHeader}
                     <div class="empty-state">
                         <i class="fas fa-search"></i>
                         <h3>No se encontraron clientes</h3>
-                        <p>No hay coincidencias para su búsqueda. Intente con otro término.</p>
+                        <p>No hay coincidencias para "<strong>${filter}</strong>".</p>
+                        <div class="mt-3">
+                            <button class="btn btn-primary" onclick="document.getElementById('searchClient').value=''; filterClients();">
+                                <i class="fas fa-times"></i> Limpiar búsqueda
+                            </button>
+                            <button class="btn btn-success" onclick="document.getElementById('userName').focus()">
+                                <i class="fas fa-user-plus"></i> Agregar nuevo cliente
+                            </button>
+                        </div>
                     </div>
                 `;
                 return;
             }
             
-            container.innerHTML = '<div class="clients-grid"></div>';
+            // Crear el grid con el header de resultados
+            container.innerHTML = `
+                ${resultsHeader}
+                <div class="clients-grid"></div>
+            `;
+            
             const grid = container.querySelector('.clients-grid');
             
             filteredUsers.forEach(userName => {
