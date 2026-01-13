@@ -469,7 +469,7 @@
             border-radius: 10px;
             font-size: 14px;
             background: white;
-            color: #333333; /* Color oscuro fijo para mejor visibilidad */
+            color: #333333;
             transition: all 0.3s;
             position: relative;
             z-index: 1;
@@ -480,12 +480,11 @@
             border-color: var(--primary);
             box-shadow: 0 0 0 3px rgba(44, 62, 80, 0.1);
             background: white;
-            color: #333333; /* Mantener color oscuro en focus */
+            color: #333333;
         }
 
-        /* Placeholder del input de búsqueda */
         .search-container input::placeholder {
-            color: #666666; /* Color gris oscuro para mejor visibilidad */
+            color: #666666;
             opacity: 0.8;
         }
 
@@ -999,135 +998,6 @@
         ::-webkit-scrollbar-thumb:hover {
             background: var(--primary-dark);
         }
-
-        /* Tema oscuro opcional - CORREGIDO */
-        @media (prefers-color-scheme: dark) {
-            :root {
-                --primary: #3498db;
-                --primary-dark: #2980b9;
-                --secondary: #9b59b6;
-                --adjust: #8e44ad;
-                --dark: #f8f9fa;
-                --light: #2c3e50;
-                --card-bg: #34495e;
-                --border: #4a5f7a;
-                --gray: #bdc3c7;
-                --shadow: rgba(0, 0, 0, 0.3);
-                --shadow-hover: rgba(0, 0, 0, 0.5);
-            }
-            
-            body {
-                background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
-            }
-            
-            .form-control {
-                background: #2c3e50;
-                color: #f8f9fa;
-                border-color: #4a5f7a;
-            }
-            
-            .form-control:focus {
-                background: #34495e;
-                color: #f8f9fa;
-            }
-            
-            .movement-item:hover {
-                background: #2c3e50;
-            }
-            
-            /* CORRECCIÓN: Input de búsqueda en tema oscuro */
-            .search-container input {
-                background: #2c3e50;
-                color: #f8f9fa !important;
-                border-color: #4a5f7a;
-            }
-            
-            .search-container input:focus {
-                background: #34495e;
-                color: #f8f9fa !important;
-                border-color: var(--primary);
-                box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
-            }
-            
-            .search-container input::placeholder {
-                color: #bdc3c7 !important;
-                opacity: 0.7;
-            }
-            
-            .search-container i {
-                color: #bdc3c7;
-            }
-            
-            /* También corregir inputs dentro de las tarjetas de cliente */
-            .movement-form .form-control {
-                background: #2c3e50;
-                color: #f8f9fa;
-                border-color: #4a5f7a;
-            }
-            
-            .movement-form .form-control:focus {
-                background: #34495e;
-                color: #f8f9fa;
-            }
-            
-            .movement-form .form-control::placeholder {
-                color: #bdc3c7;
-            }
-            
-            /* Inputs en el sidebar */
-            .sidebar .form-control {
-                background: #2c3e50;
-                color: #f8f9fa;
-                border-color: #4a5f7a;
-            }
-            
-            .sidebar .form-control:focus {
-                background: #34495e;
-                color: #f8f9fa;
-            }
-            
-            .sidebar .form-control::placeholder {
-                color: #bdc3c7;
-            }
-            
-            /* Inputs en login */
-            .auth-card .form-control {
-                background: #2c3e50;
-                color: #f8f9fa;
-                border-color: #4a5f7a;
-            }
-            
-            .auth-card .form-control:focus {
-                background: #34495e;
-                color: #f8f9fa;
-            }
-            
-            .auth-card .form-control::placeholder {
-                color: #bdc3c7;
-            }
-        }
-
-        /* Forzar colores visibles incluso si no está en tema oscuro */
-        .search-container input {
-            color: #333333 !important;
-            background-color: white !important;
-        }
-        
-        .search-container input::placeholder {
-            color: #666666 !important;
-        }
-        
-        /* Sobreescribir cualquier regla de tema oscuro */
-        @media (prefers-color-scheme: dark) {
-            .search-container input {
-                color: #f8f9fa !important;
-                background-color: #2c3e50 !important;
-            }
-            
-            .search-container input::placeholder {
-                color: #bdc3c7 !important;
-            }
-        }
     </style>
 </head>
 <body>
@@ -1213,7 +1083,7 @@
                     <div class="input-with-icon">
                         <i class="fas fa-key"></i>
                         <input type="password" id="loginPassword" class="form-control" 
-                               placeholder="" 
+                               placeholder="Ingresa tu contraseña" 
                                value="" required
                                autocomplete="current-password">
                     </div>
@@ -1412,10 +1282,11 @@
             getAuth, 
             signInWithEmailAndPassword,
             signOut,
-            onAuthStateChanged
+            onAuthStateChanged,
+            createUserWithEmailAndPassword
         } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js";
 
-        // Configuración de Firebase
+        // Configuración de Firebase - VERIFICA ESTOS DATOS EN TU CONSOLA
         const firebaseConfig = {
             apiKey: "AIzaSyBrfjepFvq-M0WI5as7OkHE2kKH-j46xb0",
             authDomain: "cobroprestamo22.firebaseapp.com",
@@ -1426,11 +1297,6 @@
             appId: "1:349047636162:web:b410ea248fe0fa7854bb5b",
             measurementId: "G-VZGWWKZSKX"
         };
-
-        // CONSTANTES DE SEGURIDAD - SOLO TU ACCESO
-        const ADMIN_UID = "l6dRlHSG7NQvfQ4m8bzeWfNhNVR2";
-        const SYSTEM_NAME = "Gestor de Préstamos Pro v2.0";
-        const ACCESS_LOG_KEY = "last_system_access";
 
         // Initialize Firebase
         const app = initializeApp(firebaseConfig);
@@ -1449,7 +1315,7 @@
 
         // Verificación de sesión previa
         function checkPreviousSession() {
-            const lastAccess = localStorage.getItem(ACCESS_LOG_KEY);
+            const lastAccess = localStorage.getItem('last_system_access');
             if (lastAccess) {
                 document.getElementById('lastAccessTime').textContent = 
                     new Date(parseInt(lastAccess)).toLocaleString();
@@ -1459,8 +1325,6 @@
         // Inicialización del sistema
         document.addEventListener('DOMContentLoaded', function() {
             console.log("🚀 Iniciando sistema administrativo...");
-            console.log("🔐 Modo: Administrador Exclusivo");
-            console.log("📊 Sistema:", SYSTEM_NAME);
             
             // Verificar sesión anterior
             checkPreviousSession();
@@ -1468,7 +1332,7 @@
             // Configurar listeners de seguridad
             setupSecurityListeners();
             
-            // Observador de autenticación con verificación estricta
+            // Observador de autenticación
             onAuthStateChanged(auth, handleAuthStateChange);
             
             // Inicializar eventos
@@ -1480,45 +1344,17 @@
 
         // Manejador de cambios de autenticación
         async function handleAuthStateChange(user) {
-            console.log("🛡️ Verificación de identidad:", user ? "Usuario detectado" : "No autenticado");
+            console.log("🛡️ Estado de autenticación:", user ? "Usuario autenticado" : "No autenticado");
             
             if (user) {
-                // VERIFICACIÓN ESTRICTA: Solo el UID autorizado
-                if (user.uid !== ADMIN_UID) {
-                    console.error("🚫 INTRUSO DETECTADO - UID no autorizado:", user.uid);
-                    await signOut(auth);
-                    showAuthMessage('Acceso no autorizado. Sistema bloqueado.', 'error');
-                    logSecurityEvent('INTRUSION_ATTEMPT', { uid: user.uid });
-                    return;
-                }
-                
-                // Usuario autorizado
+                // Usuario autenticado
                 currentUser = user;
                 systemActivity.loginAttempts = 0;
                 systemActivity.lastAccess = new Date();
                 systemActivity.connected = true;
                 
                 // Registrar acceso
-                localStorage.setItem(ACCESS_LOG_KEY, Date.now().toString());
-                
-                // Inicializar sesión segura
-                await initializeSecureSession();
-                
-            } else {
-                // No hay usuario autenticado
-                currentUser = null;
-                systemActivity.connected = false;
-                showAuth();
-            }
-        }
-
-        // Inicializar sesión segura
-        async function initializeSecureSession() {
-            try {
-                // Verificación adicional de seguridad
-                if (!currentUser || currentUser.uid !== ADMIN_UID) {
-                    throw new Error('Verificación de identidad fallida');
-                }
+                localStorage.setItem('last_system_access', Date.now().toString());
                 
                 // Mostrar aplicación
                 showApp();
@@ -1526,22 +1362,16 @@
                 // Actualizar interfaz
                 updateUserInterface();
                 
-                // Cargar datos con verificación
+                // Cargar datos
                 await loadSecureData();
                 
-                // Registrar acceso exitoso
-                logSecurityEvent('LOGIN_SUCCESS', { 
-                    email: currentUser.email,
-                    time: new Date().toISOString()
-                });
+                console.log("✅ Sesión iniciada como:", user.email, "UID:", user.uid);
                 
-                // Actualizar estado del sistema
-                updateStatus('🟢 Sistema Conectado - Modo Seguro Activo');
-                
-            } catch (error) {
-                console.error('❌ Error en inicialización segura:', error);
-                await secureLogout();
-                showAuthMessage('Error de seguridad. Reiniciando sistema...', 'error');
+            } else {
+                // No hay usuario autenticado
+                currentUser = null;
+                systemActivity.connected = false;
+                showAuth();
             }
         }
 
@@ -1557,50 +1387,53 @@
             }
             
             try {
-                console.log("🔐 Iniciando verificación de identidad...");
+                console.log("🔐 Intentando login con:", email);
                 
                 // Intentar login
                 const userCredential = await signInWithEmailAndPassword(auth, email, password);
-                console.log("✅ Credenciales verificadas");
-                
-                // La verificación del UID se hace en handleAuthStateChange
+                console.log("✅ Login exitoso");
                 
             } catch (error) {
                 systemActivity.loginAttempts++;
-                console.error('❌ Error de autenticación:', error.code);
+                console.error('❌ Error de autenticación:', error.code, error.message);
                 
                 // Manejo de errores específicos
-                let message = 'Error de verificación';
+                let message = 'Error de autenticación';
                 
                 switch(error.code) {
                     case 'auth/user-not-found':
-                        message = 'Credenciales no válidas';
+                        message = 'Usuario no encontrado. Verifica el email.';
                         break;
                     case 'auth/wrong-password':
-                        message = 'Clave de seguridad incorrecta';
+                        message = 'Contraseña incorrecta. Intenta de nuevo.';
+                        break;
+                    case 'auth/invalid-email':
+                        message = 'Email inválido. Verifica el formato.';
+                        break;
+                    case 'auth/user-disabled':
+                        message = 'Esta cuenta ha sido deshabilitada.';
                         break;
                     case 'auth/too-many-requests':
-                        message = 'Demasiados intentos. Sistema temporalmente bloqueado';
+                        message = 'Demasiados intentos. Intenta más tarde.';
                         break;
                     case 'auth/network-request-failed':
-                        message = 'Error de conexión. Verifique su internet';
+                        message = 'Error de conexión. Verifica tu internet.';
+                        break;
+                    case 'auth/invalid-login-credentials':
+                        message = 'Credenciales inválidas. Verifica tu email y contraseña.';
                         break;
                     default:
-                        message = 'Error del sistema de autenticación';
+                        message = 'Error del sistema: ' + error.message;
                 }
                 
                 showAuthMessage(message, 'error');
-                logSecurityEvent('LOGIN_FAILED', { 
-                    attempt: systemActivity.loginAttempts,
-                    error: error.code 
-                });
                 
                 // Bloqueo después de múltiples intentos
-                if (systemActivity.loginAttempts >= 3) {
-                    showAuthMessage('Sistema bloqueado por seguridad. Intente más tarde.', 'error');
+                if (systemActivity.loginAttempts >= 5) {
+                    showAuthMessage('Sistema bloqueado por seguridad. Intente en 30 minutos.', 'error');
                     setTimeout(() => {
                         document.getElementById('loginPassword').value = '';
-                    }, 3000);
+                    }, 5000);
                 }
             }
         }
@@ -1608,11 +1441,7 @@
         // Logout seguro
         async function secureLogout() {
             try {
-                // Registrar logout
-                logSecurityEvent('LOGOUT', { 
-                    email: currentUser?.email,
-                    time: new Date().toISOString()
-                });
+                console.log("🔒 Cerrando sesión...");
                 
                 // Cerrar sesión
                 await signOut(auth);
@@ -1625,23 +1454,29 @@
                 // Mostrar mensaje
                 showAuthMessage('Sesión cerrada exitosamente', 'success');
                 
+                // Limpiar contraseña
+                document.getElementById('loginPassword').value = '';
+                
             } catch (error) {
-                console.error('Error en logout seguro:', error);
+                console.error('Error en logout:', error);
                 showAuthMessage('Error al cerrar sesión', 'error');
             }
         }
 
         // Cargar datos con seguridad
         async function loadSecureData() {
-            if (!verifyAdminAccess()) return;
+            if (!currentUser) {
+                console.error("❌ No hay usuario autenticado");
+                return;
+            }
             
-            console.log("📊 Cargando datos con verificación de seguridad...");
+            console.log("📊 Cargando datos para usuario:", currentUser.email);
             
             usersRef = ref(db, 'loans');
             
             onValue(usersRef, 
                 (snapshot) => {
-                    console.log("✅ Datos recibidos de Firebase:", snapshot.val());
+                    console.log("✅ Datos recibidos de Firebase");
                     
                     const rawData = snapshot.val() || {};
                     users = {};
@@ -1659,16 +1494,9 @@
                             phone: userData.phone || '',
                             notes: userData.notes || ''
                         };
-                        
-                        // DEPURACIÓN: Mostrar estructura
-                        console.log(`Usuario ${userName}:`, {
-                            loansType: typeof users[userName].loans,
-                            isArray: Array.isArray(users[userName].loans),
-                            loansCount: users[userName].loans.length
-                        });
                     });
                     
-                    console.log("📊 Datos procesados:", users);
+                    console.log("📊 Datos procesados. Usuarios:", Object.keys(users).length);
                     
                     // Renderizar y actualizar
                     renderUsers();
@@ -1678,21 +1506,52 @@
                     
                 },
                 (error) => {
-                    console.error('❌ Error en carga de datos:', error);
+                    console.error('❌ Error en carga de datos:', error.code, error.message);
                     
+                    let errorMessage = 'Error desconocido';
                     switch(error.code) {
                         case 'PERMISSION_DENIED':
-                            updateStatus('🔴 Error de permisos - Verifique su identidad');
-                            showAlert(`
-                                <strong>Error de Seguridad</strong><br>
-                                No tiene permisos para acceder a estos datos.<br>
-                                Verifique que esté usando la cuenta administrativa correcta.
-                            `, 'error');
+                            errorMessage = `
+                                <strong>❌ Error de permisos en Firebase</strong><br><br>
+                                Necesitas configurar las reglas de seguridad:<br><br>
+                                1. Ve a <a href="https://console.firebase.google.com/" target="_blank">Firebase Console</a><br>
+                                2. Selecciona tu proyecto "cobroprestamo22"<br>
+                                3. Ve a "Realtime Database" → "Reglas"<br>
+                                4. Reemplaza con:<br>
+                                <code style="background: #f0f0f0; padding: 10px; display: block; margin: 10px 0;">
+                                {<br>
+                                  "rules": {<br>
+                                    "loans": {<br>
+                                      ".read": "auth != null",<br>
+                                      ".write": "auth != null"<br>
+                                    }<br>
+                                  }<br>
+                                }</code>
+                                5. Haz clic en "Publicar"<br><br>
+                                <button class="btn btn-primary" onclick="location.reload()">
+                                    <i class="fas fa-redo"></i> Recargar después de configurar
+                                </button>
+                            `;
                             break;
                         default:
-                            updateStatus('🔴 Error de conexión con la base de datos');
-                            showAlert('Error de conexión con el servidor: ' + error.message, 'error');
+                            errorMessage = `Error de conexión: ${error.message}`;
                     }
+                    
+                    // Mostrar error en UI
+                    const usersContainer = document.getElementById('usersContainer');
+                    if (usersContainer) {
+                        usersContainer.innerHTML = `
+                            <div class="alert alert-error">
+                                <i class="fas fa-exclamation-triangle"></i>
+                                <div>${errorMessage}</div>
+                            </div>
+                        `;
+                    }
+                    
+                    updateStatus('🔴 Error de conexión con Firebase');
+                    
+                    // También mostrar alerta
+                    showAlert(errorMessage, 'error');
                 }
             );
         }
@@ -1717,7 +1576,10 @@
 
         // Agregar cliente con verificación
         async function addUser() {
-            if (!verifyAdminAccess()) return;
+            if (!currentUser) {
+                showAlert('Debes iniciar sesión primero', 'error');
+                return;
+            }
             
             const nameInput = document.getElementById('userName');
             const phoneInput = document.getElementById('userPhone');
@@ -1741,7 +1603,7 @@
             try {
                 // CREAR ESTRUCTURA CORRECTA
                 const userData = {
-                    loans: [], // <-- ESTO ES UN ARRAY VACÍO
+                    loans: [],
                     createdAt: Date.now(),
                     updatedAt: Date.now(),
                     createdBy: currentUser.email,
@@ -1773,12 +1635,6 @@
                 renderUsers();
                 updateStatistics();
                 
-                // Log de actividad
-                logSecurityEvent('CLIENT_ADDED', { 
-                    client: name,
-                    by: currentUser.email
-                });
-                
             } catch (error) {
                 console.error('❌ Error al agregar cliente:', error);
                 showAlert('Error al registrar cliente: ' + error.message, 'error');
@@ -1787,7 +1643,10 @@
 
         // Eliminar cliente con confirmación
         async function deleteUser(name) {
-            if (!verifyAdminAccess()) return;
+            if (!currentUser) {
+                showAlert('Debes iniciar sesión primero', 'error');
+                return;
+            }
             
             openModal(
                 'Eliminar Cliente',
@@ -1797,11 +1656,6 @@
                     try {
                         await remove(ref(db, 'loans/' + encodeURIComponent(name)));
                         showAlert(`Cliente "${name}" eliminado del sistema`, 'success');
-                        
-                        logSecurityEvent('CLIENT_DELETED', { 
-                            client: name,
-                            by: currentUser.email
-                        });
                         
                     } catch (error) {
                         console.error('Error al eliminar cliente:', error);
@@ -1813,7 +1667,10 @@
 
         // Agregar movimiento con validación
         async function addLoan(userName, customAmount = null, isAdjustment = false) {
-            if (!verifyAdminAccess()) return;
+            if (!currentUser) {
+                showAlert('Debes iniciar sesión primero', 'error');
+                return;
+            }
             
             let amount;
             if (customAmount !== null) {
@@ -1887,29 +1744,18 @@
                 renderUsers();
                 updateStatistics();
                 
-                // Log de actividad
-                logSecurityEvent(isAdjustment ? 'ACCOUNT_CLOSED' : 'MOVEMENT_ADDED', { 
-                    client: userName,
-                    amount: amount,
-                    type: isAdjustment ? 'ADJUSTMENT' : (amount > 0 ? 'LOAN' : 'PAYMENT')
-                });
-                
             } catch (error) {
                 console.error('❌ Error al agregar movimiento:', error);
-                console.error('Detalles del error:', {
-                    userName,
-                    users: users[userName],
-                    errorCode: error.code,
-                    errorMessage: error.message
-                });
-                
                 showAlert('Error al registrar movimiento: ' + error.message, 'error');
             }
         }
 
         // Liquidar/Cerrar cuenta de cliente
         async function closeAccount(userName) {
-            if (!verifyAdminAccess()) return;
+            if (!currentUser) {
+                showAlert('Debes iniciar sesión primero', 'error');
+                return;
+            }
             
             const total = calculateTotal(userName);
             
@@ -1940,7 +1786,10 @@
 
         // Eliminar movimiento con confirmación
         async function deleteLoan(userName, index, amount) {
-            if (!verifyAdminAccess()) return;
+            if (!currentUser) {
+                showAlert('Debes iniciar sesión primero', 'error');
+                return;
+            }
             
             const tipo = amount >= 0 ? 'préstamo' : 'pago';
             const absAmount = Math.abs(amount).toFixed(2);
@@ -1962,12 +1811,6 @@
                         
                         showAlert('Movimiento eliminado', 'success');
                         
-                        logSecurityEvent('MOVEMENT_DELETED', { 
-                            client: userName,
-                            amount: amount,
-                            index: index
-                        });
-                        
                     } catch (error) {
                         console.error('Error al eliminar movimiento:', error);
                         showAlert('Error al eliminar movimiento', 'error');
@@ -1976,9 +1819,12 @@
             );
         }
 
-        // Exportar a CSV seguro
+        // Exportar a CSV
         function exportToCSV() {
-            if (!verifyAdminAccess()) return;
+            if (!currentUser) {
+                showAlert('Debes iniciar sesión primero', 'error');
+                return;
+            }
             
             if (Object.keys(users).length === 0) {
                 showAlert('No hay datos para exportar', 'warning');
@@ -2002,31 +1848,6 @@
                     }) : 'N/A';
                 
                 csv += `"${userName}","${phone}","${total.toFixed(2)}","${lastUpdate}","${notes}"\n`;
-                
-                // Detalles de movimientos
-                if (user.loans && user.loans.length > 0 && Array.isArray(user.loans)) {
-                    csv += 'MOVIMIENTOS:\n';
-                    csv += 'FECHA,TIPO,MONTO,PROCESADO_POR,NOTA\n';
-                    
-                    user.loans.forEach(loan => {
-                        const date = new Date(loan.date).toLocaleDateString('es-MX', {
-                            year: 'numeric',
-                            month: '2-digit',
-                            day: '2-digit',
-                            hour: '2-digit',
-                            minute: '2-digit'
-                        });
-                        const type = loan.type === 'ajuste' ? 'AJUSTE' : 
-                                    loan.amount > 0 ? 'PRÉSTAMO' : 'PAGO';
-                        const amount = Math.abs(loan.amount).toFixed(2);
-                        const processedBy = loan.processedBy || 'Sistema';
-                        const note = loan.note || '';
-                        
-                        csv += `"${date}","${type}","${amount}","${processedBy}","${note}"\n`;
-                    });
-                }
-                
-                csv += '\n';
             }
             
             // Crear y descargar archivo
@@ -2043,10 +1864,6 @@
             document.body.removeChild(link);
             
             showAlert('Exportación completada exitosamente', 'success');
-            logSecurityEvent('EXPORT_CSV', { 
-                records: Object.keys(users).length,
-                by: currentUser.email
-            });
         }
 
         // Funciones de utilidad
@@ -2084,26 +1901,6 @@
             });
         }
 
-        // Verificación de acceso administrativo
-        function verifyAdminAccess() {
-            if (!currentUser || currentUser.uid !== ADMIN_UID) {
-                showAlert('Acceso denegado. Solo el administrador puede realizar esta acción.', 'error');
-                return false;
-            }
-            return true;
-        }
-
-        // Log de eventos de seguridad
-        function logSecurityEvent(event, data = {}) {
-            const log = {
-                event: event,
-                timestamp: new Date().toISOString(),
-                user: currentUser?.email || 'unknown',
-                ...data
-            };
-            console.log('🔐 Evento de seguridad:', log);
-        }
-
         // Configurar timeout de inactividad
         function setupInactivityTimeout() {
             let timeout;
@@ -2114,7 +1911,7 @@
                         showAlert('Sesión expirada por inactividad', 'warning');
                         secureLogout();
                     }
-                }, 30 * 60 * 1000); // 30 minutos
+                }, 30 * 60 * 1000);
             };
             
             // Reset en eventos de usuario
@@ -2132,14 +1929,6 @@
                 if (currentUser) {
                     e.preventDefault();
                     showAlert('Acción restringida en modo administrador', 'warning');
-                }
-            });
-            
-            // Prevenir atajos de teclado
-            document.addEventListener('keydown', (e) => {
-                if (currentUser && (e.ctrlKey && (e.key === 'u' || e.key === 's' || e.key === 'p'))) {
-                    e.preventDefault();
-                    showAlert('Función deshabilitada por seguridad', 'warning');
                 }
             });
         }
@@ -2320,9 +2109,6 @@
         function renderUsers(filter = '') {
             const container = document.getElementById('usersContainer');
             
-            console.log(`🔄 Renderizando usuarios. Filtro: "${filter}"`);
-            console.log(`📊 Total de usuarios: ${Object.keys(users).length}`);
-            
             if (Object.keys(users).length === 0) {
                 container.innerHTML = `
                     <div class="empty-state">
@@ -2342,7 +2128,6 @@
                 filteredUsers = filteredUsers.filter(userName => 
                     userName.toLowerCase().includes(filter)
                 );
-                console.log(`✅ Usuarios filtrados: ${filteredUsers.length} de ${Object.keys(users).length}`);
             }
             
             // Agregar un mensaje de resultados
@@ -2401,12 +2186,6 @@
                 let loans = [];
                 if (userData && userData.loans) {
                     loans = Array.isArray(userData.loans) ? userData.loans : [];
-                }
-                
-                // DEPURACIÓN POR USUARIO
-                if (!Array.isArray(loans)) {
-                    console.error(`⚠️ ERROR: loans no es array para ${userName}`, loans);
-                    loans = [];
                 }
                 
                 const total = calculateTotal(userName);
@@ -2570,14 +2349,36 @@
             }
         }
 
-        // === FUNCIÓN PARA CORREGIR DATOS CORRUPTOS ===
-        async function fixCorruptedData() {
-            if (!verifyAdminAccess()) return;
+        // Función para crear usuario si no existe
+        async function createAdminUser() {
+            const email = prompt("Ingresa el email para crear el usuario administrador:");
+            const password = prompt("Ingresa la contraseña (mínimo 6 caracteres):");
             
-            // Usar modal de confirmación
+            if (!email || !password || password.length < 6) {
+                alert("Datos inválidos. La contraseña debe tener al menos 6 caracteres.");
+                return;
+            }
+            
+            try {
+                const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+                alert(`✅ Usuario creado exitosamente!\nEmail: ${email}\nUID: ${userCredential.user.uid}`);
+                console.log("UID del nuevo usuario:", userCredential.user.uid);
+            } catch (error) {
+                console.error("Error creando usuario:", error);
+                alert(`❌ Error: ${error.message}`);
+            }
+        }
+
+        // Función para corregir datos
+        async function fixCorruptedData() {
+            if (!currentUser) {
+                showAlert('Debes iniciar sesión primero', 'error');
+                return;
+            }
+            
             openModal(
                 'Corrección de Datos',
-                '⚠️ <strong>ADVERTENCIA DE SEGURIDAD</strong><br><br>' +
+                '⚠️ <strong>ADVERTENCIA</strong><br><br>' +
                 'Esta operación corregirá todos los datos corruptos en la base de datos.<br><br>' +
                 '<strong>¿Está seguro de continuar?</strong>',
                 async () => {
@@ -2595,11 +2396,8 @@
                                 const user = usersCopy[userName];
                                 let needsFix = false;
                                 
-                                console.log(`🔍 Verificando usuario: ${userName}`);
-                                
                                 // 1. Asegurar que loans sea array
                                 if (!user.loans || !Array.isArray(user.loans)) {
-                                    console.log(`  ⚠️ Corrigiendo: loans no era array para ${userName}`);
                                     user.loans = [];
                                     needsFix = true;
                                 }
@@ -2608,7 +2406,6 @@
                                 if (Array.isArray(user.loans)) {
                                     const originalLength = user.loans.length;
                                     user.loans = user.loans.filter(loan => {
-                                        // Validar que cada loan sea un objeto válido
                                         return loan && 
                                             typeof loan === 'object' && 
                                             'amount' in loan &&
@@ -2616,7 +2413,6 @@
                                     });
                                     
                                     if (originalLength !== user.loans.length) {
-                                        console.log(`  ⚠️ ${userName}: removidos ${originalLength - user.loans.length} movimientos inválidos`);
                                         needsFix = true;
                                     }
                                 }
@@ -2641,11 +2437,9 @@
                                 if (needsFix) {
                                     await set(ref(db, 'loans/' + userName), user);
                                     fixedCount++;
-                                    console.log(`  ✅ ${userName}: corregido`);
                                 }
                                 
                             } catch (userError) {
-                                console.error(`❌ Error procesando ${userName}:`, userError);
                                 errors.push(`${userName}: ${userError.message}`);
                             }
                         }
@@ -2669,13 +2463,6 @@
                         }
                         
                         showAlert(message, fixedCount > 0 ? 'success' : 'info');
-                        
-                        // Log de actividad
-                        logSecurityEvent('DATA_FIXED', {
-                            fixedCount,
-                            errorCount: errors.length,
-                            by: currentUser.email
-                        });
                         
                     } catch (error) {
                         console.error('❌ Error general en fixCorruptedData:', error);
@@ -2724,6 +2511,7 @@
         window.showSystemInfo = showSystemInfo;
         window.showAlert = showAlert;
         window.fixCorruptedData = fixCorruptedData;
+        window.createAdminUser = createAdminUser; // Función para crear usuario
     </script>
 </body>
 </html>
