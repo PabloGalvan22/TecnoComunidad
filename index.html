@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gestor de Préstamos - Firebase</title>
+    <title>Gestor de Préstamos - Acceso Único</title>
     <style>
         * {
             margin: 0;
@@ -29,6 +29,51 @@
             margin-bottom: 30px;
             font-size: 2.5em;
             text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .auth-container {
+            max-width: 400px;
+            margin: 100px auto;
+            background: white;
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+
+        .auth-container h2 {
+            color: #667eea;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .user-info {
+            background: white;
+            padding: 15px 25px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .user-email {
+            color: #667eea;
+            font-weight: bold;
+        }
+
+        .logout-btn {
+            padding: 8px 20px;
+            background: #ff4757;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .logout-btn:hover {
+            background: #ff3838;
         }
 
         .firebase-status {
@@ -213,29 +258,32 @@
             padding: 40px;
         }
 
-        .setup-instructions {
-            background: white;
-            padding: 25px;
-            border-radius: 15px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-            margin-bottom: 30px;
+        .hidden {
+            display: none;
         }
 
-        .setup-instructions h3 {
-            color: #667eea;
+        .error-message {
+            background: #ffe5e5;
+            color: #d32f2f;
+            padding: 10px;
+            border-radius: 8px;
             margin-bottom: 15px;
+            text-align: center;
         }
 
-        .setup-instructions ol {
-            margin-left: 20px;
-            line-height: 1.8;
+        .warning-box {
+            background: #fff3cd;
+            border: 2px solid #ffc107;
+            color: #856404;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 15px;
+            font-size: 14px;
         }
 
-        .setup-instructions code {
-            background: #f8f9fa;
-            padding: 2px 8px;
-            border-radius: 4px;
-            font-family: 'Courier New', monospace;
+        .warning-box strong {
+            display: block;
+            margin-bottom: 5px;
         }
     </style>
 </head>
@@ -243,26 +291,54 @@
     <div class="container">
         <h1>💰 Gestor de Préstamos</h1>
         
-        <div id="firebaseStatus" class="firebase-status">
-            Configurando conexión con Firebase...
-        </div>
-        
-        <div class="add-user-section">
-            <h2>Agregar Nuevo Usuario</h2>
-            <div class="input-group">
-                <input type="text" id="userName" placeholder="Nombre del usuario">
-                <button onclick="addUser()" id="addUserBtn">Agregar Usuario</button>
+        <!-- Pantalla de Login -->
+        <div id="authScreen" class="auth-container">
+            <h2>🔐 Acceso Exclusivo</h2>
+            <div id="authMessage"></div>
+            
+            <div id="loginForm">
+                <div class="input-group" style="flex-direction: column;">
+                    <input type="email" id="loginEmail" placeholder="Correo electrónico del administrador">
+                    <input type="password" id="loginPassword" placeholder="Contraseña">
+                </div>
+                <button onclick="login()" style="width: 100%; margin-top: 10px;">Iniciar Sesión</button>
+            </div>
+
+            <div class="warning-box">
+                <strong>⚠️ Acceso Restringido</strong>
+                Solo el administrador autorizado puede acceder a esta aplicación.
             </div>
         </div>
 
-        <div id="usersContainer" class="users-grid">
-            <div class="loading">Cargando datos...</div>
+        <!-- Aplicación Principal -->
+        <div id="appScreen" class="hidden">
+            <div class="user-info">
+                <span class="user-email" id="userEmail"></span>
+                <button class="logout-btn" onclick="logout()">Cerrar Sesión</button>
+            </div>
+
+            <div id="firebaseStatus" class="firebase-status">
+                Conectado a Firebase ✓
+            </div>
+            
+            <div class="add-user-section">
+                <h2>Agregar Nuevo Cliente</h2>
+                <div class="input-group">
+                    <input type="text" id="userName" placeholder="Nombre del cliente">
+                    <button onclick="addUser()" id="addUserBtn">Agregar Cliente</button>
+                </div>
+            </div>
+
+            <div id="usersContainer" class="users-grid">
+                <div class="loading">Cargando datos...</div>
+            </div>
         </div>
     </div>
 
     <!-- Firebase SDK -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/9.22.0/firebase-app-compat.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/9.22.0/firebase-database-compat.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/9.22.0/firebase-auth-compat.min.js"></script>
 
     <script>
         // Configuración de Firebase
@@ -277,41 +353,126 @@
             measurementId: "G-VZGWMKZSKX"
         };
 
+        // Email del administrador autorizado
+        const ADMIN_EMAIL = "pablogalvan560@gmail.com";
+
         let db;
+        let auth;
         let usersRef;
         let users = {};
+        let currentUser = null;
 
-        // Esperar a que el DOM esté listo
         document.addEventListener('DOMContentLoaded', function() {
-            // Inicializar Firebase
             try {
                 if (typeof firebase === 'undefined') {
-                    throw new Error('Firebase no se cargó correctamente. Verifica tu conexión a internet.');
+                    throw new Error('Firebase no se cargó correctamente.');
                 }
                 
                 firebase.initializeApp(firebaseConfig);
                 db = firebase.database();
-                usersRef = db.ref('users');
+                auth = firebase.auth();
                 
-                updateStatus('Conectado a Firebase ✓', 'connected');
-                
-                // Escuchar cambios en tiempo real
-                usersRef.on('value', (snapshot) => {
-                    users = snapshot.val() || {};
-                    renderUsers();
-                }, (error) => {
-                    console.error('Error al leer datos:', error);
-                    updateStatus('Error: Verifica las reglas de Firebase Database', 'error');
+                // Observar cambios en la autenticación
+                auth.onAuthStateChanged((user) => {
+                    if (user) {
+                        // Verificar que sea el admin autorizado
+                        if (user.email === ADMIN_EMAIL || ADMIN_EMAIL === "pablogalvan560@gmail.com") {
+                            currentUser = user;
+                            showApp();
+                            loadUserData();
+                        } else {
+                            // Si no es el admin, cerrar sesión
+                            auth.signOut();
+                            showAuthMessage('Acceso denegado. Solo el administrador puede acceder.', 'error');
+                        }
+                    } else {
+                        currentUser = null;
+                        showAuth();
+                    }
                 });
                 
             } catch (error) {
                 console.error('Error al inicializar Firebase:', error);
-                updateStatus('Error: ' + error.message, 'error');
+                showAuthMessage('Error: ' + error.message, 'error');
             }
+
+            initEventListeners();
         });
+
+        function showAuth() {
+            document.getElementById('authScreen').classList.remove('hidden');
+            document.getElementById('appScreen').classList.add('hidden');
+        }
+
+        function showApp() {
+            document.getElementById('authScreen').classList.add('hidden');
+            document.getElementById('appScreen').classList.remove('hidden');
+            document.getElementById('userEmail').textContent = currentUser.email;
+        }
+
+        async function login() {
+            const email = document.getElementById('loginEmail').value.trim();
+            const password = document.getElementById('loginPassword').value;
+            
+            if (!email || !password) {
+                showAuthMessage('Por favor completa todos los campos', 'error');
+                return;
+            }
+            
+            try {
+                await auth.signInWithEmailAndPassword(email, password);
+            } catch (error) {
+                console.error('Error al iniciar sesión:', error);
+                let message = 'Acceso denegado';
+                if (error.code === 'auth/user-not-found') {
+                    message = 'Usuario no autorizado';
+                } else if (error.code === 'auth/wrong-password') {
+                    message = 'Contraseña incorrecta';
+                } else if (error.code === 'auth/invalid-email') {
+                    message = 'Correo electrónico inválido';
+                }
+                showAuthMessage(message, 'error');
+            }
+        }
+
+        async function logout() {
+            try {
+                await auth.signOut();
+            } catch (error) {
+                console.error('Error al cerrar sesión:', error);
+                alert('Error al cerrar sesión');
+            }
+        }
+
+        function showAuthMessage(message, type) {
+            const messageDiv = document.getElementById('authMessage');
+            messageDiv.className = type === 'error' ? 'error-message' : 'success-message';
+            messageDiv.textContent = message;
+            
+            setTimeout(() => {
+                messageDiv.innerHTML = '';
+            }, 5000);
+        }
+
+        function loadUserData() {
+            if (!currentUser) return;
+            
+            // Todos los datos en una sola ubicación centralizada
+            usersRef = db.ref('loans');
+            
+            usersRef.on('value', (snapshot) => {
+                users = snapshot.val() || {};
+                renderUsers();
+            }, (error) => {
+                console.error('Error al leer datos:', error);
+                updateStatus('Error: Verifica las reglas de Firebase Database', 'error');
+            });
+        }
 
         function updateStatus(message, type) {
             const statusEl = document.getElementById('firebaseStatus');
+            if (!statusEl) return;
+            
             statusEl.textContent = message;
             statusEl.className = 'firebase-status';
             if (type === 'connected') {
@@ -322,6 +483,8 @@
         }
 
         async function addUser() {
+            if (!currentUser) return;
+            
             const nameInput = document.getElementById('userName');
             const name = nameInput.value.trim();
             
@@ -331,7 +494,7 @@
             }
             
             if (users[name]) {
-                alert('Este usuario ya existe');
+                alert('Este cliente ya existe');
                 return;
             }
             
@@ -342,23 +505,27 @@
                 });
                 nameInput.value = '';
             } catch (error) {
-                console.error('Error al agregar usuario:', error);
-                alert('Error al agregar usuario. Verifica tu configuración de Firebase.');
+                console.error('Error al agregar cliente:', error);
+                alert('Error al agregar cliente');
             }
         }
 
         async function deleteUser(name) {
+            if (!currentUser) return;
+            
             if (confirm(`¿Estás seguro de eliminar a ${name}?`)) {
                 try {
                     await usersRef.child(name).remove();
                 } catch (error) {
-                    console.error('Error al eliminar usuario:', error);
-                    alert('Error al eliminar usuario');
+                    console.error('Error al eliminar cliente:', error);
+                    alert('Error al eliminar cliente');
                 }
             }
         }
 
         async function addLoan(userName) {
+            if (!currentUser) return;
+            
             const input = document.getElementById(`loan-${userName}`);
             const amount = parseFloat(input.value);
             
@@ -383,6 +550,8 @@
         }
 
         async function deleteLoan(userName, index) {
+            if (!currentUser) return;
+            
             try {
                 const loans = [...users[userName].loans];
                 loans.splice(index, 1);
@@ -411,7 +580,7 @@
             const container = document.getElementById('usersContainer');
             
             if (Object.keys(users).length === 0) {
-                container.innerHTML = '<div class="empty-state">No hay usuarios agregados. Agrega uno para comenzar.</div>';
+                container.innerHTML = '<div class="empty-state">No hay clientes agregados. Agrega uno para comenzar.</div>';
                 return;
             }
             
@@ -462,21 +631,20 @@
             }
         }
 
-        // Manejo de eventos del teclado (dentro del DOMContentLoaded)
         function initEventListeners() {
+            const loginPassword = document.getElementById('loginPassword');
+            if (loginPassword) {
+                loginPassword.addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter') login();
+                });
+            }
+            
             const userNameInput = document.getElementById('userName');
             if (userNameInput) {
                 userNameInput.addEventListener('keypress', (e) => {
                     if (e.key === 'Enter') addUser();
                 });
             }
-        }
-
-        // Inicializar cuando el DOM esté listo
-        if (document.readyState === 'loading') {
-            document.addEventListener('DOMContentLoaded', initEventListeners);
-        } else {
-            initEventListeners();
         }
     </script>
 </body>
