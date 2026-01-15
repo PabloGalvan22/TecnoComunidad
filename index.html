@@ -254,20 +254,24 @@
             font-size: 13px;
         }
 
-        /* Header de la aplicación */
+        /* Header de la aplicación - MODIFICADO PARA SER FIXED */
         .app-header {
             background: var(--card-bg);
-            border-radius: 15px;
-            padding: 20px 30px;
-            margin-bottom: 25px;
             box-shadow: 0 5px 20px var(--shadow);
+            border-bottom: 1px solid var(--border);
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            z-index: 1000;
+            padding: 20px 0;
+        }
+
+        .app-header .container {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            position: sticky;
-            top: 20px;
-            z-index: 100;
-            border: 1px solid var(--border);
+            padding: 0 20px;
         }
 
         .header-left {
@@ -394,7 +398,7 @@
             border: 1px solid var(--border);
             height: fit-content;
             position: sticky;
-            top: 110px;
+            top: 140px; /* Ajustado por el header fixed */
         }
 
         .sidebar-section {
@@ -1044,7 +1048,7 @@
         }
 
         @media (max-width: 768px) {
-            .app-header {
+            .app-header .container {
                 flex-direction: column;
                 gap: 20px;
                 text-align: center;
@@ -1246,6 +1250,14 @@
                         <i class="fas fa-fingerprint"></i> Verificar Identidad
                     </button>
                 </div>
+                
+                <!-- BOTÓN PARA CREAR USUARIO ADMINISTRADOR -->
+                <div class="form-group mt-4 text-center">
+                    <button type="button" class="btn btn-warning btn-block" onclick="createAdminUser()">
+                        <i class="fas fa-user-plus"></i> Crear Usuario Administrador
+                    </button>
+                    <small class="text-muted d-block mt-2">Usar solo si no tienes cuenta</small>
+                </div>
             </form>
 
             <div class="system-info mt-4 text-center">
@@ -1260,9 +1272,9 @@
 
     <!-- Aplicación Principal -->
     <div id="appScreen" class="hidden">
-        <div class="container">
-            <!-- Header de la App -->
-            <div class="app-header">
+        <!-- Header de la App - AHORA SEPARADO Y FIXED -->
+        <div class="app-header">
+            <div class="container">
                 <div class="header-left">
                     <div class="brand">
                         <i class="fas fa-vault"></i>
@@ -1302,7 +1314,10 @@
                     </div>
                 </div>
             </div>
+        </div>
 
+        <!-- Contenido Principal - CON PADDING SUPERIOR PARA COMPENSAR EL HEADER FIXED -->
+        <div class="container" style="padding-top: 140px;">
             <!-- Dashboard Principal -->
             <div class="dashboard">
                 <!-- Sidebar -->
@@ -1576,6 +1591,58 @@
             }
         }
 
+        // Función para crear usuario administrador
+        async function createAdminUser() {
+            const email = document.getElementById('loginEmail').value.trim();
+            let password = prompt("Ingresa la contraseña para el usuario administrador (mínimo 6 caracteres):");
+            
+            if (!email) {
+                alert("Por favor ingresa un email válido en el campo de email primero.");
+                return;
+            }
+            
+            if (!password || password.length < 6) {
+                alert("La contraseña debe tener al menos 6 caracteres.");
+                return;
+            }
+            
+            try {
+                showAuthMessage('Creando usuario administrador...', 'info');
+                
+                const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+                console.log("✅ Usuario creado exitosamente:", userCredential.user.uid);
+                
+                showAuthMessage('✅ Usuario creado exitosamente. Ahora puedes iniciar sesión.', 'success');
+                
+                // Limpiar contraseña del prompt
+                password = '';
+                
+            } catch (error) {
+                console.error('❌ Error creando usuario:', error.code, error.message);
+                
+                let message = 'Error creando usuario';
+                
+                switch(error.code) {
+                    case 'auth/email-already-in-use':
+                        message = 'Este email ya está registrado. Usa otro email o inicia sesión.';
+                        break;
+                    case 'auth/invalid-email':
+                        message = 'Email inválido. Verifica el formato.';
+                        break;
+                    case 'auth/operation-not-allowed':
+                        message = 'Operación no permitida. Contacta al administrador.';
+                        break;
+                    case 'auth/weak-password':
+                        message = 'Contraseña muy débil. Usa una contraseña más segura.';
+                        break;
+                    default:
+                        message = 'Error del sistema: ' + error.message;
+                }
+                
+                showAuthMessage(message, 'error');
+            }
+        }
+
         // Logout seguro
         async function secureLogout() {
             try {
@@ -1636,10 +1703,10 @@
                     
                     console.log("📊 Datos procesados. Usuarios:", Object.keys(users).length);
                     
-                    // Renderizar y actualizar
+                    // Renderizar y actualizar - ORDEN CORRECTO
                     renderUsers();
-                    updateStatistics();
-                    updateSystemSummary();
+                    updateStatistics();  // Esto actualiza las estadísticas del header
+                    updateSystemSummary(); // Esto actualiza el panel de resumen
                     updateStatus('🟢 Sistema Conectado - Datos cargados');
                     
                 },
@@ -1656,15 +1723,16 @@
                 // Avatar
                 const avatar = document.getElementById('userAvatar');
                 const initials = currentUser.email.substring(0, 2).toUpperCase();
-                avatar.textContent = initials;
-                avatar.style.background = 'linear-gradient(135deg, #2ecc71, #27ae60)';
+                if (avatar) avatar.textContent = initials;
+                if (avatar) avatar.style.background = 'linear-gradient(135deg, #2ecc71, #27ae60)';
                 
                 // Email
-                document.getElementById('userEmail').textContent = currentUser.email;
+                const userEmailEl = document.getElementById('userEmail');
+                if (userEmailEl) userEmailEl.textContent = currentUser.email;
                 
                 // Actualizar última conexión
-                document.getElementById('lastConnection').textContent = 
-                    new Date().toLocaleString();
+                const lastConnectionEl = document.getElementById('lastConnection');
+                if (lastConnectionEl) lastConnectionEl.textContent = new Date().toLocaleString();
             }
         }
 
@@ -1718,9 +1786,9 @@
                 users[name] = userData;
                 
                 // Limpiar formulario
-                nameInput.value = '';
-                phoneInput.value = '';
-                notesInput.value = '';
+                if (nameInput) nameInput.value = '';
+                if (phoneInput) phoneInput.value = '';
+                if (notesInput) notesInput.value = '';
                 
                 // Mostrar confirmación
                 showAlert(`Cliente "${name}" registrado exitosamente`, 'success');
@@ -1728,6 +1796,7 @@
                 // Actualizar UI
                 renderUsers();
                 updateStatistics();
+                updateSystemSummary();
                 
             } catch (error) {
                 console.error('❌ Error al agregar cliente:', error);
@@ -1749,7 +1818,13 @@
                 async function() {
                     try {
                         await remove(ref(db, 'loans/' + encodeURIComponent(name)));
+                        delete users[name];
                         showAlert(`Cliente "${name}" eliminado del sistema`, 'success');
+                        
+                        // Actualizar UI
+                        renderUsers();
+                        updateStatistics();
+                        updateSystemSummary();
                         
                     } catch (error) {
                         console.error('Error al eliminar cliente:', error);
@@ -1780,14 +1855,14 @@
                 }
                 
                 try {
-                    const user = users[userName];
+                    let user = users[userName];
                     
                     // SI EL USUARIO NO EXISTE, CREARLO
                     if (!user) {
                         console.warn(`⚠️ Usuario ${userName} no encontrado, creando estructura...`);
                         
                         // Crear estructura inicial
-                        users[userName] = {
+                        user = {
                             loans: [],
                             createdAt: Date.now(),
                             updatedAt: Date.now(),
@@ -1795,7 +1870,8 @@
                         };
                         
                         // Guardar en Firebase
-                        await set(ref(db, 'loans/' + userName), users[userName]);
+                        await set(ref(db, 'loans/' + userName), user);
+                        users[userName] = user;
                     }
                     
                     // ASEGURAR QUE loans SEA UN ARRAY
@@ -1823,12 +1899,17 @@
                     // Guardar en Firebase
                     await set(ref(db, 'loans/' + userName), users[userName]);
                     
+                    // Limpiar input
+                    const input = document.getElementById(`loan-${userName}`);
+                    if (input) input.value = '';
+                    
                     // Mostrar confirmación
                     showAlert('Movimiento registrado exitosamente', 'success');
                     
                     // Actualizar UI
                     renderUsers();
                     updateStatistics();
+                    updateSystemSummary();
                     
                 } catch (error) {
                     console.error('❌ Error al agregar movimiento:', error);
@@ -1869,22 +1950,23 @@
             }
             
             try {
-                const user = users[userName];
+                let user = users[userName];
                 
                 // SI EL USUARIO NO EXISTE, CREARLO
                 if (!user) {
                     console.warn(`⚠️ Usuario ${userName} no encontrado, creando estructura...`);
                     
                     // Crear estructura inicial
-                    users[userName] = {
+                    user = {
                         loans: [],
                         createdAt: Date.now(),
                         updatedAt: Date.now(),
                         createdBy: currentUser.email
                     };
-                    
+                        
                     // Guardar en Firebase
-                    await set(ref(db, 'loans/' + userName), users[userName]);
+                    await set(ref(db, 'loans/' + userName), user);
+                    users[userName] = user;
                 }
                 
                 // ASEGURAR QUE loans SEA UN ARRAY
@@ -1918,56 +2000,12 @@
                 // Actualizar UI
                 renderUsers();
                 updateStatistics();
+                updateSystemSummary();
                 
             } catch (error) {
                 console.error('❌ Error al agregar movimiento:', error);
                 showAlert('Error al registrar movimiento: ' + error.message, 'error');
             }
-        }
-
-        // Función auxiliar para manejar teclado numérico en móviles
-        function handleMobileInput(userName, action, value = null) {
-            const input = document.getElementById(`loan-${userName}`);
-            if (!input) return;
-            
-            let currentValue = input.value.replace(/[^0-9.-]/g, '');
-            
-            switch(action) {
-                case 'digit':
-                    if (currentValue === '0' || currentValue === '-0') {
-                        currentValue = currentValue.replace('0', value);
-                    } else {
-                        currentValue += value;
-                    }
-                    break;
-                    
-                case 'decimal':
-                    if (!currentValue.includes('.')) {
-                        currentValue += '.';
-                    }
-                    break;
-                    
-                case 'sign':
-                    if (currentValue.startsWith('-')) {
-                        currentValue = currentValue.substring(1);
-                    } else if (currentValue !== '' && currentValue !== '0') {
-                        currentValue = '-' + currentValue;
-                    }
-                    break;
-                    
-                case 'backspace':
-                    currentValue = currentValue.slice(0, -1);
-                    if (currentValue === '' || currentValue === '-') {
-                        currentValue = '0';
-                    }
-                    break;
-                    
-                case 'clear':
-                    currentValue = '0';
-                    break;
-            }
-            
-            input.value = currentValue;
         }
 
         // Liquidar/Cerrar cuenta de cliente
@@ -1998,8 +2036,13 @@
                         // Crear movimiento de ajuste
                         const user = users[userName];
                         
-                        if (!Array.isArray(users[userName].loans)) {
-                            users[userName].loans = [];
+                        if (!user) {
+                            showAlert('Cliente no encontrado', 'error');
+                            return;
+                        }
+                        
+                        if (!Array.isArray(user.loans)) {
+                            user.loans = [];
                         }
                         
                         const newLoan = {
@@ -2011,17 +2054,18 @@
                             id: Date.now().toString() + Math.random().toString(36).substr(2, 9)
                         };
                         
-                        users[userName].loans.push(newLoan);
-                        users[userName].updatedAt = Date.now();
+                        user.loans.push(newLoan);
+                        user.updatedAt = Date.now();
                         
                         // Guardar en Firebase
-                        await set(ref(db, 'loans/' + userName), users[userName]);
+                        await set(ref(db, 'loans/' + userName), user);
                         
                         showAlert('Cuenta liquidada exitosamente', 'success');
                         
                         // Actualizar UI
                         renderUsers();
                         updateStatistics();
+                        updateSystemSummary();
                         
                     } catch (error) {
                         console.error('Error al liquidar cuenta:', error);
@@ -2057,6 +2101,11 @@
                         await set(ref(db, 'loans/' + encodeURIComponent(userName) + '/updatedAt'), Date.now());
                         
                         showAlert('Movimiento eliminado', 'success');
+                        
+                        // Actualizar UI
+                        renderUsers();
+                        updateStatistics();
+                        updateSystemSummary();
                         
                     } catch (error) {
                         console.error('Error al eliminar movimiento:', error);
@@ -2148,15 +2197,177 @@
             });
         }
 
+        // FUNCIÓN CORREGIDA: Actualizar estadísticas
+        function updateStatistics() {
+            try {
+                console.log("📊 Actualizando estadísticas...");
+                
+                const clientCount = Object.keys(users).length;
+                let totalLoans = 0;
+                let totalPayments = 0;
+                let activeClients = 0;
+                
+                Object.values(users).forEach(user => {
+                    if (user && user.loans && Array.isArray(user.loans)) {
+                        const total = user.loans.reduce((sum, loan) => {
+                            const amount = parseFloat(loan?.amount) || 0;
+                            return sum + amount;
+                        }, 0);
+                        
+                        if (total !== 0) activeClients++;
+                        
+                        user.loans.forEach(loan => {
+                            const amount = parseFloat(loan?.amount) || 0;
+                            if (amount > 0) {
+                                totalLoans += amount;
+                            } else if (amount < 0) {
+                                totalPayments += Math.abs(amount);
+                            }
+                        });
+                    }
+                });
+                
+                console.log("📊 Estadísticas calculadas:", {
+                    clientCount,
+                    totalLoans,
+                    totalPayments,
+                    activeClients
+                });
+                
+                // Actualizar elementos HTML - VERIFICAR QUE EXISTEN
+                const totalClientsEl = document.getElementById('totalClients');
+                const totalLoansEl = document.getElementById('totalLoans');
+                const totalPaymentsEl = document.getElementById('totalPayments');
+                
+                if (totalClientsEl) {
+                    totalClientsEl.textContent = clientCount;
+                    console.log("✅ totalClients actualizado:", clientCount);
+                }
+                
+                if (totalLoansEl) {
+                    totalLoansEl.textContent = `$${totalLoans.toFixed(2)}`;
+                    console.log("✅ totalLoans actualizado:", totalLoans);
+                }
+                
+                if (totalPaymentsEl) {
+                    totalPaymentsEl.textContent = `$${totalPayments.toFixed(2)}`;
+                    console.log("✅ totalPayments actualizado:", totalPayments);
+                }
+                
+            } catch (error) {
+                console.error('❌ Error en updateStatistics:', error);
+            }
+        }
+
+        // FUNCIÓN CORREGIDA: Actualizar resumen del sistema
+        function updateSystemSummary() {
+            try {
+                console.log("📈 Actualizando resumen del sistema...");
+                
+                const clientCount = Object.keys(users).length;
+                let totalBalance = 0;
+                let activeClients = 0;
+                let pendingLoans = 0;
+                let totalLoans = 0;
+                let totalPayments = 0;
+                
+                Object.values(users).forEach(user => {
+                    if (user && user.loans && Array.isArray(user.loans)) {
+                        const total = user.loans.reduce((sum, loan) => {
+                            const amount = parseFloat(loan?.amount) || 0;
+                            return sum + amount;
+                        }, 0);
+                        
+                        totalBalance += total;
+                        
+                        if (total !== 0) activeClients++;
+                        if (total > 0) pendingLoans++;
+                        
+                        user.loans.forEach(loan => {
+                            const amount = parseFloat(loan?.amount) || 0;
+                            if (amount > 0) {
+                                totalLoans += amount;
+                            } else if (amount < 0) {
+                                totalPayments += Math.abs(amount);
+                            }
+                        });
+                    }
+                });
+                
+                console.log("📈 Resumen calculado:", {
+                    totalBalance,
+                    activeClients,
+                    pendingLoans,
+                    totalLoans,
+                    totalPayments
+                });
+                
+                // Actualizar elementos HTML del panel de resumen
+                const summaryTotalEl = document.getElementById('summaryTotal');
+                const summaryActiveEl = document.getElementById('summaryActive');
+                const summaryPendingEl = document.getElementById('summaryPending');
+                
+                if (summaryTotalEl) {
+                    summaryTotalEl.textContent = `$${totalBalance.toFixed(2)}`;
+                    console.log("✅ summaryTotal actualizado:", totalBalance);
+                }
+                
+                if (summaryActiveEl) {
+                    summaryActiveEl.textContent = activeClients;
+                    console.log("✅ summaryActive actualizado:", activeClients);
+                }
+                
+                if (summaryPendingEl) {
+                    summaryPendingEl.textContent = pendingLoans;
+                    console.log("✅ summaryPending actualizado:", pendingLoans);
+                }
+                
+                // Actualizar resumen en el sidebar
+                const globalSummaryEl = document.getElementById('globalSummary');
+                if (globalSummaryEl) {
+                    globalSummaryEl.innerHTML = `
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 10px;">
+                            <div class="stat-card" style="min-width: auto; padding: 12px;">
+                                <div class="stat-label">Clientes</div>
+                                <div class="stat-value" style="font-size: 1.5rem;">${clientCount}</div>
+                            </div>
+                            <div class="stat-card" style="min-width: auto; padding: 12px;">
+                                <div class="stat-label">Saldo Total</div>
+                                <div class="stat-value" style="font-size: 1.5rem; color: ${totalBalance >= 0 ? 'var(--success)' : 'var(--danger)'}">
+                                    $${totalBalance.toFixed(2)}
+                                </div>
+                            </div>
+                            <div class="stat-card" style="min-width: auto; padding: 12px;">
+                                <div class="stat-label">Préstamos</div>
+                                <div class="stat-value" style="font-size: 1.5rem;">$${totalLoans.toFixed(2)}</div>
+                            </div>
+                            <div class="stat-card" style="min-width: auto; padding: 12px;">
+                                <div class="stat-label">Pagos</div>
+                                <div class="stat-value" style="font-size: 1.5rem;">$${totalPayments.toFixed(2)}</div>
+                            </div>
+                        </div>
+                    `;
+                    console.log("✅ globalSummary actualizado");
+                }
+                
+            } catch (error) {
+                console.error('❌ Error en updateSystemSummary:', error);
+            }
+        }
+
         // Mostrar/Ocultar pantallas
         function showAuth() {
-            document.getElementById('authScreen').classList.remove('hidden');
-            document.getElementById('appScreen').classList.add('hidden');
+            const authScreen = document.getElementById('authScreen');
+            const appScreen = document.getElementById('appScreen');
+            if (authScreen) authScreen.classList.remove('hidden');
+            if (appScreen) appScreen.classList.add('hidden');
         }
 
         function showApp() {
-            document.getElementById('authScreen').classList.add('hidden');
-            document.getElementById('appScreen').classList.remove('hidden');
+            const authScreen = document.getElementById('authScreen');
+            const appScreen = document.getElementById('appScreen');
+            if (authScreen) authScreen.classList.add('hidden');
+            if (appScreen) appScreen.classList.remove('hidden');
         }
 
         // Alertas del sistema
@@ -2176,8 +2387,17 @@
             `;
             
             const appScreen = document.getElementById('appScreen');
-            if (!appScreen.classList.contains('hidden')) {
-                appScreen.insertBefore(alertDiv, appScreen.firstChild);
+            if (appScreen && !appScreen.classList.contains('hidden')) {
+                // Insertar después del header
+                const header = document.querySelector('.app-header');
+                if (header && header.nextSibling) {
+                    appScreen.insertBefore(alertDiv, header.nextSibling);
+                } else {
+                    const container = document.querySelector('.container');
+                    if (container) {
+                        container.insertBefore(alertDiv, container.firstChild);
+                    }
+                }
                 
                 setTimeout(() => {
                     if (alertDiv.parentElement) {
@@ -2226,103 +2446,19 @@
         // Filtrado de clientes
         function filterClients() {
             const searchInput = document.getElementById('searchClient');
+            if (!searchInput) return;
+            
             const filter = searchInput.value.trim().toLowerCase();
             renderUsers(filter);
         }
 
-        // Actualizar estadísticas
-        function updateStatistics() {
-            const clientCount = Object.keys(users).length;
-            let totalLoans = 0;
-            let totalPayments = 0;
-            let activeClients = 0;
-            
-            Object.values(users).forEach(user => {
-                if (user.loans && Array.isArray(user.loans)) {
-                    const total = user.loans.reduce((sum, loan) => sum + (parseFloat(loan.amount) || 0), 0);
-                    if (total !== 0) activeClients++;
-                    
-                    user.loans.forEach(loan => {
-                        if (loan.amount > 0) {
-                            totalLoans += loan.amount;
-                        } else {
-                            totalPayments += Math.abs(loan.amount);
-                        }
-                    });
-                }
-            });
-            
-            document.getElementById('totalClients').textContent = clientCount;
-            document.getElementById('totalLoans').textContent = `$${totalLoans.toFixed(2)}`;
-            document.getElementById('totalPayments').textContent = `$${totalPayments.toFixed(2)}`;
-        }
-
-        // Actualizar resumen del sistema
-        function updateSystemSummary() {
-            const clientCount = Object.keys(users).length;
-            let totalBalance = 0;
-            let activeClients = 0;
-            let pendingLoans = 0;
-            let totalLoans = 0;
-            let totalPayments = 0;
-            
-            Object.values(users).forEach(user => {
-                if (user.loans && Array.isArray(user.loans)) {
-                    const total = user.loans.reduce((sum, loan) => sum + (parseFloat(loan.amount) || 0), 0);
-                    totalBalance += total;
-                    if (total > 0) {
-                        activeClients++;
-                        pendingLoans++;
-                    } else if (total < 0) {
-                        activeClients++;
-                    }
-                    
-                    // Calcular total de préstamos y pagos
-                    user.loans.forEach(loan => {
-                        if (loan.amount > 0) {
-                            totalLoans += loan.amount;
-                        } else {
-                            totalPayments += Math.abs(loan.amount);
-                        }
-                    });
-                }
-            });
-            
-            document.getElementById('summaryTotal').textContent = `$${totalBalance.toFixed(2)}`;
-            document.getElementById('summaryActive').textContent = activeClients;
-            document.getElementById('summaryPending').textContent = pendingLoans;
-            
-            // Actualizar el resumen en el sidebar
-            const globalSummaryEl = document.getElementById('globalSummary');
-            if (globalSummaryEl) {
-                globalSummaryEl.innerHTML = `
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 10px;">
-                        <div class="stat-card" style="min-width: auto; padding: 12px;">
-                            <div class="stat-label">Clientes</div>
-                            <div class="stat-value" style="font-size: 1.5rem;">${clientCount}</div>
-                        </div>
-                        <div class="stat-card" style="min-width: auto; padding: 12px;">
-                            <div class="stat-label">Saldo Total</div>
-                            <div class="stat-value" style="font-size: 1.5rem; color: ${totalBalance >= 0 ? 'var(--success)' : 'var(--danger)'}">
-                                $${totalBalance.toFixed(2)}
-                            </div>
-                        </div>
-                        <div class="stat-card" style="min-width: auto; padding: 12px;">
-                            <div class="stat-label">Préstamos</div>
-                            <div class="stat-value" style="font-size: 1.5rem;">$${totalLoans.toFixed(2)}</div>
-                        </div>
-                        <div class="stat-card" style="min-width: auto; padding: 12px;">
-                            <div class="stat-label">Pagos</div>
-                            <div class="stat-value" style="font-size: 1.5rem;">$${totalPayments.toFixed(2)}</div>
-                        </div>
-                    </div>
-                `;
-            }
-        }
-
-        // Renderizar clientes - VERSIÓN SIMPLIFICADA
+        // FUNCIÓN CORREGIDA: Renderizar clientes - VERSIÓN SIMPLIFICADA
         function renderUsers(filter = '') {
             const container = document.getElementById('usersContainer');
+            if (!container) return;
+            
+            // DEFINIR isMobile AL PRINCIPIO DE LA FUNCIÓN
+            const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
             
             if (Object.keys(users).length === 0) {
                 container.innerHTML = `
@@ -2393,6 +2529,7 @@
             `;
             
             const grid = container.querySelector('.clients-grid');
+            if (!grid) return;
             
             filteredUsers.forEach(userName => {
                 const userData = users[userName];
@@ -2409,9 +2546,6 @@
                 const phone = userData.phone || 'No registrado';
                 const notes = userData.notes || 'Sin notas';
                 const createdBy = userData.createdBy || 'Sistema';
-                
-                // Detectar si es dispositivo móvil
-                const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
                 
                 const clientCard = document.createElement('div');
                 clientCard.className = 'client-card';
@@ -2444,8 +2578,8 @@
                             ${balanceSign}$${Math.abs(total).toFixed(2)}
                         </div>
                         <div class="balance-label">
-                            ${total > 0 ? 'EL CLIENTE TE DEBE' : 
-                            total < 0 ? 'LE DEBES AL CLIENTE' : 'SALDO CERRADO'}
+                            ${total > 0 ? 'SALDO A FAVOR DEL SISTEMA' : 
+                            total < 0 ? 'SALDO A FAVOR DEL CLIENTE' : 'SALDO CERRADO'}
                             <div style="font-size: 11px; margin-top: 5px; opacity: 0.7;">
                                 ${loans.length} movimiento(s) registrado(s)
                             </div>
@@ -2645,7 +2779,7 @@
         window.closeInfoModal = closeInfoModal;
         window.showSystemInfo = showSystemInfo;
         window.showAlert = showAlert;
-        window.handleMobileInput = handleMobileInput;
+        window.createAdminUser = createAdminUser;
     </script>
 </body>
 </html>
