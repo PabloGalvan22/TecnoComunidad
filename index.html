@@ -254,24 +254,20 @@
             font-size: 13px;
         }
 
-        /* Header de la aplicación - MODIFICADO PARA SER FIXED */
+        /* Header de la aplicación */
         .app-header {
             background: var(--card-bg);
+            border-radius: 15px;
+            padding: 20px 30px;
+            margin-bottom: 25px;
             box-shadow: 0 5px 20px var(--shadow);
-            border-bottom: 1px solid var(--border);
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            z-index: 1000;
-            padding: 20px 0;
-        }
-
-        .app-header .container {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 0 20px;
+            position: sticky;
+            top: 20px;
+            z-index: 100;
+            border: 1px solid var(--border);
         }
 
         .header-left {
@@ -398,7 +394,7 @@
             border: 1px solid var(--border);
             height: fit-content;
             position: sticky;
-            top: 140px; /* Ajustado por el header fixed */
+            top: 110px;
         }
 
         .sidebar-section {
@@ -1048,7 +1044,7 @@
         }
 
         @media (max-width: 768px) {
-            .app-header .container {
+            .app-header {
                 flex-direction: column;
                 gap: 20px;
                 text-align: center;
@@ -1272,9 +1268,9 @@
 
     <!-- Aplicación Principal -->
     <div id="appScreen" class="hidden">
-        <!-- Header de la App - AHORA SEPARADO Y FIXED -->
-        <div class="app-header">
-            <div class="container">
+        <div class="container">
+            <!-- Header de la App -->
+            <div class="app-header">
                 <div class="header-left">
                     <div class="brand">
                         <i class="fas fa-vault"></i>
@@ -1314,10 +1310,7 @@
                     </div>
                 </div>
             </div>
-        </div>
 
-        <!-- Contenido Principal - CON PADDING SUPERIOR PARA COMPENSAR EL HEADER FIXED -->
-        <div class="container" style="padding-top: 140px;">
             <!-- Dashboard Principal -->
             <div class="dashboard">
                 <!-- Sidebar -->
@@ -1963,7 +1956,7 @@
                         updatedAt: Date.now(),
                         createdBy: currentUser.email
                     };
-                        
+                    
                     // Guardar en Firebase
                     await set(ref(db, 'loans/' + userName), user);
                     users[userName] = user;
