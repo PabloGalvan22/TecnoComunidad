@@ -922,6 +922,183 @@
             justify-content: space-between;
         }
 
+        /* NOVEDAD: Input group para móviles */
+        .input-group-mobile {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .input-group-mobile input {
+            flex: 1;
+            font-size: 16px !important; /* Prevenir zoom en iOS */
+            -webkit-appearance: none;
+            appearance: none;
+        }
+
+        .sign-toggle-btn {
+            background: var(--warning);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            padding: 0 20px;
+            font-size: 1.5rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            min-width: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .sign-toggle-btn:hover {
+            background: var(--warning-dark);
+        }
+
+        .sign-toggle-btn.negative {
+            background: var(--danger);
+        }
+
+        /* NOVEDAD: Teclado virtual para móviles */
+        .virtual-keyboard {
+            display: none; /* Oculto por defecto, se muestra en móviles */
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin-top: 15px;
+            padding: 15px;
+            background: var(--light);
+            border-radius: 15px;
+            border: 2px solid var(--border);
+        }
+
+        .keyboard-btn {
+            background: white;
+            border: 2px solid var(--border);
+            border-radius: 10px;
+            padding: 15px;
+            font-size: 1.2rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 50px;
+            user-select: none;
+        }
+
+        .keyboard-btn:hover {
+            background: var(--primary);
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        .keyboard-btn.clear {
+            background: var(--danger);
+            color: white;
+            grid-column: span 2;
+        }
+
+        .keyboard-btn.negative {
+            background: var(--warning);
+            color: white;
+        }
+
+        .keyboard-btn.decimal {
+            background: var(--info);
+            color: white;
+        }
+
+        .keyboard-btn.enter {
+            background: var(--success);
+            color: white;
+            grid-column: span 2;
+        }
+
+        /* NOVEDAD: Modal de teclado para móviles */
+        .keyboard-modal {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: var(--card-bg);
+            border-radius: 20px 20px 0 0;
+            padding: 20px;
+            box-shadow: 0 -5px 20px rgba(0,0,0,0.2);
+            z-index: 1000;
+            transform: translateY(100%);
+            transition: transform 0.3s ease;
+        }
+
+        .keyboard-modal.active {
+            transform: translateY(0);
+        }
+
+        .keyboard-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .amount-display {
+            background: var(--light);
+            border: 2px solid var(--border);
+            border-radius: 10px;
+            padding: 12px 15px;
+            font-size: 1.3rem;
+            font-weight: 600;
+            text-align: center;
+            min-height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--dark);
+            margin-bottom: 15px;
+            font-family: 'Courier New', monospace;
+        }
+
+        /* NOVEDAD: Tipo de movimiento */
+        .amount-type-selector {
+            display: flex;
+            border-radius: 10px;
+            overflow: hidden;
+            background: var(--light);
+            border: 2px solid var(--border);
+            margin-bottom: 15px;
+        }
+
+        .amount-type-btn {
+            padding: 12px;
+            background: none;
+            border: none;
+            font-weight: 600;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.3s;
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .amount-type-btn.active {
+            background: var(--primary);
+            color: white;
+        }
+
+        .amount-type-btn.loan-btn.active {
+            background: var(--success);
+        }
+
+        .amount-type-btn.payment-btn.active {
+            background: var(--danger);
+        }
+
         /* Responsive */
         @media (max-width: 1200px) {
             .dashboard {
@@ -967,6 +1144,37 @@
                 max-width: 100%;
                 margin-top: 15px;
             }
+            
+            /* NOVEDAD: Mostrar teclado virtual en móviles */
+            .virtual-keyboard {
+                display: grid;
+            }
+            
+            /* NOVEDAD: Ocultar inputs numéricos nativos en móviles */
+            .mobile-amount-input {
+                font-size: 16px !important;
+                -webkit-appearance: none;
+                appearance: none;
+            }
+            
+            /* NOVEDAD: Mejorar el área de entrada para móviles */
+            .movement-form .form-control {
+                min-height: 50px;
+                font-size: 18px;
+            }
+            
+            /* NOVEDAD: Input group para móviles */
+            .input-group-mobile {
+                flex-direction: row;
+            }
+        }
+
+        @media (min-width: 769px) {
+            /* NOVEDAD: En desktop, mostrar botón de signo junto al input */
+            .input-group-desktop {
+                display: flex;
+                gap: 10px;
+            }
         }
 
         /* Efectos especiales */
@@ -997,6 +1205,17 @@
 
         ::-webkit-scrollbar-thumb:hover {
             background: var(--primary-dark);
+        }
+        
+        /* NOVEDAD: Estilos para inputs en móviles */
+        input[type="number"]::-webkit-inner-spin-button,
+        input[type="number"]::-webkit-outer-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+        
+        input[type="number"] {
+            -moz-appearance: textfield;
         }
     </style>
 </head>
@@ -1044,6 +1263,62 @@
                     <i class="fas fa-times"></i> Cerrar
                 </button>
             </div>
+        </div>
+    </div>
+
+    <!-- NOVEDAD: Modal de Teclado Virtual para Móviles -->
+    <div id="keyboardModal" class="keyboard-modal">
+        <div class="keyboard-header">
+            <h4 style="margin: 0; color: var(--primary);">
+                <i class="fas fa-calculator"></i> Ingresar Monto
+            </h4>
+            <button class="btn btn-danger btn-sm" onclick="closeKeyboard()">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        
+        <div class="amount-display" id="keyboardDisplay">
+            $0.00
+        </div>
+        
+        <div class="amount-type-selector">
+            <button class="amount-type-btn loan-btn active" onclick="setAmountType('loan')">
+                <i class="fas fa-hand-holding-usd"></i> Préstamo
+            </button>
+            <button class="amount-type-btn payment-btn" onclick="setAmountType('payment')">
+                <i class="fas fa-money-bill-wave"></i> Pago
+            </button>
+        </div>
+        
+        <div class="virtual-keyboard">
+            <button class="keyboard-btn" onclick="addDigit(7)">7</button>
+            <button class="keyboard-btn" onclick="addDigit(8)">8</button>
+            <button class="keyboard-btn" onclick="addDigit(9)">9</button>
+            <button class="keyboard-btn clear" onclick="clearAmount()">
+                <i class="fas fa-undo"></i> Limpiar
+            </button>
+            
+            <button class="keyboard-btn" onclick="addDigit(4)">4</button>
+            <button class="keyboard-btn" onclick="addDigit(5)">5</button>
+            <button class="keyboard-btn" onclick="addDigit(6)">6</button>
+            <button class="keyboard-btn negative" onclick="toggleNegative()">
+                <i class="fas fa-minus"></i> -
+            </button>
+            
+            <button class="keyboard-btn" onclick="addDigit(1)">1</button>
+            <button class="keyboard-btn" onclick="addDigit(2)">2</button>
+            <button class="keyboard-btn" onclick="addDigit(3)">3</button>
+            <button class="keyboard-btn decimal" onclick="addDecimal()">
+                <i class="fas fa-circle"></i> .
+            </button>
+            
+            <button class="keyboard-btn" onclick="addDigit(0)">0</button>
+            <button class="keyboard-btn" onclick="backspace()">
+                <i class="fas fa-backspace"></i>
+            </button>
+            <button class="keyboard-btn enter" onclick="submitAmount()">
+                <i class="fas fa-check"></i> Aceptar
+            </button>
         </div>
     </div>
 
@@ -1313,6 +1588,13 @@
             connected: false
         };
 
+        // NOVEDAD: Variables para teclado móvil
+        let keyboardCurrentUser = null;
+        let keyboardAmount = '0';
+        let keyboardIsNegative = false;
+        let keyboardHasDecimal = false;
+        let keyboardAmountType = 'loan'; // 'loan' o 'payment'
+
         // Verificación de sesión previa
         function checkPreviousSession() {
             const lastAccess = localStorage.getItem('last_system_access');
@@ -1340,6 +1622,9 @@
             
             // Configurar timeout de inactividad
             setupInactivityTimeout();
+            
+            // Detectar si es dispositivo móvil
+            detectMobileDevice();
         });
 
         // Manejador de cambios de autenticación
@@ -1519,13 +1804,13 @@
                                 3. Ve a "Realtime Database" → "Reglas"<br>
                                 4. Reemplaza con:<br>
                                 <code style="background: #f0f0f0; padding: 10px; display: block; margin: 10px 0;">
-                                {<br>
-                                  "rules": {<br>
-                                    "loans": {<br>
-                                      ".read": "auth != null",<br>
-                                      ".write": "auth != null"<br>
-                                    }<br>
-                                  }<br>
+                                {
+                                  "rules": {
+                                    "loans": {
+                                      ".read": "auth != null",
+                                      ".write": "auth != null"
+                                    }
+                                  }
                                 }</code>
                                 5. Haz clic en "Publicar"<br><br>
                                 <button class="btn btn-primary" onclick="location.reload()">
@@ -1665,6 +1950,192 @@
             );
         }
 
+        // NOVEDAD: Función para abrir teclado virtual en móviles
+        function openKeyboardForUser(userName) {
+            if (!currentUser) {
+                showAlert('Debes iniciar sesión primero', 'error');
+                return;
+            }
+            
+            keyboardCurrentUser = userName;
+            keyboardAmount = '0';
+            keyboardIsNegative = false;
+            keyboardHasDecimal = false;
+            keyboardAmountType = 'loan';
+            
+            // Actualizar display
+            updateKeyboardDisplay();
+            
+            // Mostrar modal
+            const modal = document.getElementById('keyboardModal');
+            if (modal) {
+                modal.classList.add('active');
+            }
+            
+            // Activar botón de préstamo por defecto
+            document.querySelectorAll('.amount-type-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            document.querySelector('.loan-btn').classList.add('active');
+        }
+
+        // NOVEDAD: Función para cerrar teclado virtual
+        function closeKeyboard() {
+            const modal = document.getElementById('keyboardModal');
+            if (modal) {
+                modal.classList.remove('active');
+            }
+            keyboardCurrentUser = null;
+        }
+
+        // NOVEDAD: Actualizar display del teclado
+        function updateKeyboardDisplay() {
+            const display = document.getElementById('keyboardDisplay');
+            if (display) {
+                let displayAmount = keyboardAmount;
+                if (keyboardIsNegative && !displayAmount.startsWith('-')) {
+                    displayAmount = '-' + displayAmount;
+                } else if (!keyboardIsNegative && displayAmount.startsWith('-')) {
+                    displayAmount = displayAmount.substring(1);
+                }
+                
+                // Formatear como moneda
+                const num = parseFloat(displayAmount || '0');
+                display.textContent = '$' + num.toFixed(2);
+                
+                // Cambiar color según tipo
+                if (keyboardAmountType === 'payment') {
+                    display.style.color = 'var(--danger)';
+                } else {
+                    display.style.color = 'var(--success)';
+                }
+            }
+        }
+
+        // NOVEDAD: Agregar dígito al teclado
+        function addDigit(digit) {
+            if (keyboardAmount === '0') {
+                keyboardAmount = digit.toString();
+            } else {
+                // Limitar a 10 dígitos (incluyendo decimales)
+                if (keyboardAmount.replace('.', '').length < 10) {
+                    keyboardAmount += digit.toString();
+                }
+            }
+            updateKeyboardDisplay();
+        }
+
+        // NOVEDAD: Agregar punto decimal
+        function addDecimal() {
+            if (!keyboardHasDecimal) {
+                keyboardAmount += '.';
+                keyboardHasDecimal = true;
+                updateKeyboardDisplay();
+            }
+        }
+
+        // NOVEDAD: Borrar último dígito
+        function backspace() {
+            if (keyboardAmount.length > 1) {
+                const lastChar = keyboardAmount.charAt(keyboardAmount.length - 1);
+                if (lastChar === '.') {
+                    keyboardHasDecimal = false;
+                }
+                keyboardAmount = keyboardAmount.slice(0, -1);
+            } else {
+                keyboardAmount = '0';
+                keyboardHasDecimal = false;
+            }
+            updateKeyboardDisplay();
+        }
+
+        // NOVEDAD: Limpiar cantidad
+        function clearAmount() {
+            keyboardAmount = '0';
+            keyboardIsNegative = false;
+            keyboardHasDecimal = false;
+            updateKeyboardDisplay();
+        }
+
+        // NOVEDAD: Cambiar signo
+        function toggleNegative() {
+            keyboardIsNegative = !keyboardIsNegative;
+            updateKeyboardDisplay();
+        }
+
+        // NOVEDAD: Establecer tipo de monto
+        function setAmountType(type) {
+            keyboardAmountType = type;
+            
+            // Actualizar botones
+            document.querySelectorAll('.amount-type-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            
+            if (type === 'loan') {
+                document.querySelector('.loan-btn').classList.add('active');
+            } else {
+                document.querySelector('.payment-btn').classList.add('active');
+            }
+            
+            updateKeyboardDisplay();
+        }
+
+        // NOVEDAD: Enviar cantidad desde teclado
+        function submitAmount() {
+            if (!keyboardCurrentUser) {
+                showAlert('Error: usuario no seleccionado', 'error');
+                return;
+            }
+            
+            // Calcular monto final
+            let finalAmount = parseFloat(keyboardAmount || '0');
+            if (keyboardIsNegative) {
+                finalAmount = -Math.abs(finalAmount);
+            }
+            
+            // Si es pago, asegurar que sea negativo
+            if (keyboardAmountType === 'payment' && finalAmount > 0) {
+                finalAmount = -finalAmount;
+            }
+            
+            // Si es préstamo, asegurar que sea positivo
+            if (keyboardAmountType === 'loan' && finalAmount < 0) {
+                finalAmount = Math.abs(finalAmount);
+            }
+            
+            // Validar monto
+            if (isNaN(finalAmount) || finalAmount === 0) {
+                showAlert('Ingrese un monto válido diferente de cero', 'error');
+                return;
+            }
+            
+            if (Math.abs(finalAmount) > 1000000) {
+                showAlert('El monto excede el límite permitido', 'error');
+                return;
+            }
+            
+            // Llamar a addLoan con el monto calculado
+            addLoan(keyboardCurrentUser, finalAmount, false);
+            
+            // Cerrar teclado
+            closeKeyboard();
+        }
+
+        // NOVEDAD: Función para alternar signo en input normal (para desktop)
+        function toggleSign(userName) {
+            const input = document.getElementById(`loan-${userName}`);
+            if (!input) return;
+            
+            let value = input.value.trim();
+            if (value.startsWith('-')) {
+                value = value.substring(1);
+            } else if (value !== '' && value !== '0' && value !== '-') {
+                value = '-' + value;
+            }
+            input.value = value;
+        }
+
         // Agregar movimiento con validación
         async function addLoan(userName, customAmount = null, isAdjustment = false) {
             if (!currentUser) {
@@ -1677,7 +2148,27 @@
                 amount = customAmount;
             } else {
                 const input = document.getElementById(`loan-${userName}`);
-                amount = parseFloat(input.value);
+                if (!input) {
+                    showAlert('No se encontró el campo de entrada', 'error');
+                    return;
+                }
+                
+                let amountText = input.value.trim().replace(/,/g, '');
+                
+                // Manejar entrada vacía
+                if (amountText === '' || amountText === '-') {
+                    showAlert('Ingrese un monto válido', 'error');
+                    return;
+                }
+                
+                // Validar formato
+                const regex = /^-?\d*\.?\d+$|^-?\d+\.?\d*$/;
+                if (!regex.test(amountText)) {
+                    showAlert('Formato inválido. Use números con punto decimal opcional. Ej: 100, -50, 25.5', 'error');
+                    return;
+                }
+                
+                amount = parseFloat(amountText);
             }
             
             if (isNaN(amount) || amount === 0) {
@@ -1731,10 +2222,10 @@
                 // Guardar en Firebase
                 await set(ref(db, 'loans/' + userName), users[userName]);
                 
-                // Limpiar input si se usó el input
+                // Limpiar input si se usó el input normal
                 if (customAmount === null) {
                     const input = document.getElementById(`loan-${userName}`);
-                    input.value = '';
+                    if (input) input.value = '';
                 }
                 
                 // Mostrar confirmación
@@ -1931,6 +2422,15 @@
                     showAlert('Acción restringida en modo administrador', 'warning');
                 }
             });
+        }
+
+        // Detectar si es dispositivo móvil
+        function detectMobileDevice() {
+            const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+            if (isMobile) {
+                console.log("📱 Dispositivo móvil detectado");
+                document.body.classList.add('mobile-device');
+            }
         }
 
         // Mostrar/Ocultar pantallas
@@ -2195,6 +2695,9 @@
                 const notes = userData.notes || 'Sin notas';
                 const createdBy = userData.createdBy || 'Sistema';
                 
+                // Determinar si es dispositivo móvil
+                const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+                
                 const clientCard = document.createElement('div');
                 clientCard.className = 'client-card';
                 clientCard.setAttribute('data-user', userName);
@@ -2235,20 +2738,40 @@
                     </div>
                     
                     <div class="movement-form">
-                        <div class="form-group mb-3">
-                            <input type="number" id="loan-${userName}" 
-                                class="form-control" 
-                                placeholder="Monto (positivo=préstamo, negativo=pago)" 
-                                step="0.01"
-                                autocomplete="off">
-                            <div class="form-note">
-                                <i class="fas fa-info-circle"></i> 
-                                Positivo: entrega de préstamo | Negativo: recepción de pago
+                        ${isMobile ? `
+                            <!-- PARA MÓVILES: Botón para abrir teclado virtual -->
+                            <div class="form-group mb-3">
+                                <button class="btn btn-primary btn-block" onclick="openKeyboardForUser('${userName}')" style="min-height: 50px; font-size: 16px;">
+                                    <i class="fas fa-calculator"></i> Ingresar Monto (Teclado Virtual)
+                                </button>
+                                <div class="form-note">
+                                    <i class="fas fa-info-circle"></i> 
+                                    Toque para abrir teclado con números negativos
+                                </div>
                             </div>
-                        </div>
-                        <button class="btn btn-primary btn-block" onclick="addLoan('${userName}')">
-                            <i class="fas fa-plus-circle"></i> Registrar Movimiento
-                        </button>
+                        ` : `
+                            <!-- PARA DESKTOP: Input normal con botón de signo -->
+                            <div class="form-group mb-3">
+                                <div class="input-group-desktop">
+                                    <input type="text" id="loan-${userName}" 
+                                        class="form-control mobile-amount-input" 
+                                        placeholder="Ej: 100 o -50" 
+                                        inputmode="decimal"
+                                        autocomplete="off"
+                                        style="font-size: 16px;">
+                                    <button type="button" class="sign-toggle-btn ${total >= 0 ? '' : 'negative'}" onclick="toggleSign('${userName}')">
+                                        ${total >= 0 ? '+' : '-'}
+                                    </button>
+                                </div>
+                                <div class="form-note">
+                                    <i class="fas fa-info-circle"></i> 
+                                    Positivo: entrega de préstamo | Negativo: recepción de pago
+                                </div>
+                            </div>
+                            <button class="btn btn-primary btn-block" onclick="addLoan('${userName}')">
+                                <i class="fas fa-plus-circle"></i> Registrar Movimiento
+                            </button>
+                        `}
                     </div>
                     
                     ${notes !== 'Sin notas' ? `
@@ -2492,6 +3015,17 @@
                 if (e.key === 'Escape') {
                     closeModal();
                     closeInfoModal();
+                    closeKeyboard();
+                }
+            });
+            
+            // Cerrar teclado al tocar fuera
+            document.addEventListener('click', (e) => {
+                const keyboardModal = document.getElementById('keyboardModal');
+                if (keyboardModal && keyboardModal.classList.contains('active') && 
+                    !keyboardModal.contains(e.target) && 
+                    !e.target.closest('.client-card')) {
+                    closeKeyboard();
                 }
             });
         }
@@ -2511,7 +3045,19 @@
         window.showSystemInfo = showSystemInfo;
         window.showAlert = showAlert;
         window.fixCorruptedData = fixCorruptedData;
-        window.createAdminUser = createAdminUser; // Función para crear usuario
+        window.createAdminUser = createAdminUser;
+        
+        // NOVEDAD: Funciones del teclado móvil
+        window.openKeyboardForUser = openKeyboardForUser;
+        window.closeKeyboard = closeKeyboard;
+        window.addDigit = addDigit;
+        window.addDecimal = addDecimal;
+        window.backspace = backspace;
+        window.clearAmount = clearAmount;
+        window.toggleNegative = toggleNegative;
+        window.setAmountType = setAmountType;
+        window.submitAmount = submitAmount;
+        window.toggleSign = toggleSign;
     </script>
 </body>
 </html>
